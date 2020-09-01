@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2020-09-01T19:58:06.867873Z</date>
+  <millis>1598990286867</millis>
+  <nanos>873000</nanos>
+  <sequence>0</sequence>
+  <logger>loggerdemo</logger>
+  <level>INFO</level>
+  <class>LogToFileUsingFileHandler</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>doing stuff</message>
+</record>
+<record>
+  <date>2020-09-01T19:58:07.009063Z</date>
+  <millis>1598990287009</millis>
+  <nanos>63000</nanos>
+  <sequence>1</sequence>
+  <logger>loggerdemo</logger>
+  <level>SEVERE</level>
+  <class>LogToFileUsingFileHandler</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>dividing by 0</message>
+</record>
+<record>
+  <date>2020-09-01T19:58:07.011539Z</date>
+  <millis>1598990287011</millis>
+  <nanos>539000</nanos>
+  <sequence>2</sequence>
+  <logger>loggerdemo</logger>
+  <level>INFO</level>
+  <class>LogToFileUsingFileHandler</class>
+  <method>main</method>
+  <thread>1</thread>
+  <message>done</message>
+</record>
+</log>
