@@ -15,19 +15,22 @@ public class Player {
         idPlayer = 0;
         name = "";
         dorsal = "0";
+        team = new Team();
     }
 
     /**
-     * Constructor de un jugador con su identificador, nombre y dorsal
+     * Constructor de un jugador con su identificador, nombre, dorsal y equipo
      *
      * @param idPlayer Identificador del jugador
      * @param name Nombre del jugador
      * @param dorsal Dorsal del jugador
+     * @param team Equipo al que pertenece el jugador
      */
-    public Player(int idPlayer, String name, String dorsal) {
+    public Player(int idPlayer, String name, String dorsal, Team team) {
         this.idPlayer = idPlayer;
         this.name = name;
         this.dorsal = dorsal;
+        this.team = team;
     }
     //</editor-fold>
 
@@ -85,6 +88,24 @@ public class Player {
     public void setDorsal(String dorsal) {
         this.dorsal = dorsal;
     }
+
+    /**
+     * Trae el equipo al que pertenece el jugador
+     *
+     * @return Equipo al que pertenece el jugador
+     */
+    public Team getTeam() {
+        return team;
+    }
+
+    /**
+     * Cambia el equipo al que pertenece el jugador
+     *
+     * @param team Nuevo equipo al que pertenece el jugador
+     */
+    public void setTeam(Team team) {
+        this.team = team;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
@@ -102,5 +123,10 @@ public class Player {
      * Número con que juega el jugador
      */
     private String dorsal;
+
+    /**
+     * Equipo al que pertenece el jugador
+     */
+    private Team team;
     //</editor-fold>
 }
