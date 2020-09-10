@@ -15,7 +15,9 @@ public class Fixture {
      */
     public Fixture() {
         idFixture = 0;
-        position = new Position();
+        name = "";
+        home = new Position();
+        away = new Position();
         date = new Date();
         stadium = new Stadium();
     }
@@ -25,13 +27,18 @@ public class Fixture {
      * grupo, la fecha y el estadio donde se juega
      *
      * @param idFixture Identificador del calendario
-     * @param position Posición del equipo y su grupo
+     * @param name Nombre de la fecha del calendario
+     * @param home Equipo que juega de local
+     * @param away Equipo que juega de visitante
      * @param date Fecha del juego
      * @param stadium Estadio donde se juega
      */
-    public Fixture(int idFixture, Position position, Date date, Stadium stadium) {
+    public Fixture(int idFixture, String name, Position home,
+            Position away, Date date, Stadium stadium) {
         this.idFixture = idFixture;
-        this.position = position;
+        this.name = name;
+        this.home = home;
+        this.away = away;
         this.date = date;
         this.stadium = stadium;
     }
@@ -57,21 +64,57 @@ public class Fixture {
     }
 
     /**
-     * Trae la posición del equipo en el grupo
+     * Trae el nombre de la fecha del calendario
      *
-     * @return Posición del equipo en el grupo
+     * @return Nombre de la fecha del calendario
      */
-    public Position getPosition() {
-        return position;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Cambia la posición del equipo en el grupo
+     * Cambia el nombre de la fecha del calendario
      *
-     * @param position Nueva posición del equipo en el grupo
+     * @param name Nuevo nombre de la fecha del calendario
      */
-    public void setPosition(Position position) {
-        this.position = position;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Trae el equipo que juega de local
+     *
+     * @return Equipo que juega de local
+     */
+    public Position getHome() {
+        return home;
+    }
+
+    /**
+     * Cambia el equipo que juega de local
+     *
+     * @param home Nuevo equipo que juega de local
+     */
+    public void setHome(Position home) {
+        this.home = home;
+    }
+
+    /**
+     * Trae el equipo que juega de visitante
+     *
+     * @return Equipo que juega de visitante
+     */
+    public Position getAway() {
+        return away;
+    }
+
+    /**
+     * Cambia el equipo que juega de visitante
+     *
+     * @param away Nuevo equipo que juega de visitante
+     */
+    public void setAway(Position away) {
+        this.away = away;
     }
 
     /**
@@ -118,9 +161,19 @@ public class Fixture {
     private int idFixture;
 
     /**
-     * Equipo y grupo dentro del torneo
+     * Nombre de la fecha dentro del calendario
      */
-    private Position position;
+    private String name;
+
+    /**
+     * Equipo dentro del grupo y del torneo que juega de local
+     */
+    private Position home;
+
+    /**
+     * Equipo dentro del grupo y del torneo que juega de visitante
+     */
+    private Position away;
 
     /**
      * Fecha del juego

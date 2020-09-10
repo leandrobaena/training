@@ -18,8 +18,8 @@ public class Position {
         win = 0;
         draw = 0;
         lost = 0;
-        goalsFor = 0;
-        goalsAgainst = 0;
+        goalFor = 0;
+        goalAgainst = 0;
     }
 
     /**
@@ -37,8 +37,8 @@ public class Position {
         this.win = win;
         this.draw = draw;
         this.lost = lost;
-        this.goalsFor = goalsFor;
-        this.goalsAgainst = goalsAgainst;
+        this.goalFor = goalsFor;
+        this.goalAgainst = goalsAgainst;
     }
     //</editor-fold>
 
@@ -157,8 +157,8 @@ public class Position {
      *
      * @return Número de goles a favor
      */
-    public int getGoalsFor() {
-        return goalsFor;
+    public int getGoalFor() {
+        return goalFor;
     }
 
     /**
@@ -166,8 +166,8 @@ public class Position {
      *
      * @param goalsFor Nuevo número de goles a favor
      */
-    public void setGoalsFor(int goalsFor) {
-        this.goalsFor = goalsFor;
+    public void setGoalFor(int goalsFor) {
+        this.goalFor = goalsFor;
     }
 
     /**
@@ -175,8 +175,8 @@ public class Position {
      *
      * @return Número de goles en contra
      */
-    public int getGoalsAgainst() {
-        return goalsAgainst;
+    public int getGoalAgainst() {
+        return goalAgainst;
     }
 
     /**
@@ -184,8 +184,8 @@ public class Position {
      *
      * @param goalsAgainst Nuevo número de goles en contra
      */
-    public void setGoalsAgainst(int goalsAgainst) {
-        this.goalsAgainst = goalsAgainst;
+    public void setGoalAgainst(int goalsAgainst) {
+        this.goalAgainst = goalsAgainst;
     }
     //</editor-fold>
 
@@ -220,11 +220,11 @@ public class Position {
     /**
      * Goles a favor
      */
-    private int goalsFor;
+    private int goalFor;
 
     /**
      * Goles en contra
      */
-    private int goalsAgainst;
+    private int goalAgainst;
     //</editor-fold>
 }
