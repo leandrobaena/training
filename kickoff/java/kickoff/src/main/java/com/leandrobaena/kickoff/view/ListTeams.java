@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -34,9 +33,8 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
         initComponents();
         Properties properties = new Properties();
         properties.load(new FileInputStream("settings_db.properties"));
-        com.leandrobaena.kickoff.logic.Team team = new com.leandrobaena.kickoff.logic.Team(properties);
-        teams = team.list();
-        ((ListTeamTableModel) tblTeams.getModel()).setTeams(teams);
+        teamMgr = new com.leandrobaena.kickoff.logic.Team(properties);
+        ((ListTeamTableModel) tblTeams.getModel()).setTeams(teamMgr.list());
         tblTeams.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
@@ -78,6 +76,11 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
 
         btnDelete.setText("Eliminar");
         btnDelete.setEnabled(false);
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -122,6 +125,20 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        try {
+            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el equipo?", "Borrar equipo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
+                teamMgr.delete(selected);
+                ListTeamTableModel model = ListTeamTableModel.getInstance();
+                model.setTeams(teamMgr.list());
+                JOptionPane.showMessageDialog(null, "Equipo eliminado con éxito");
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el equipo");
+        }
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
     /**
      * Dibuja el componente del listado de equipos
      *
@@ -138,7 +155,6 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
      * @return Formulario principal de la aplicación
      */
     private JFrame getJFrame() {
-        JFrame f = null;
         Container current = this;
         Class c = current.getClass();
         while (!"com.leandrobaena.kickoff.view.Main".equals(c.getName())) {
@@ -170,6 +186,6 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblTeams;
     // End of variables declaration//GEN-END:variables
-    private ArrayList<Team> teams;
+    private com.leandrobaena.kickoff.logic.Team teamMgr;
     //</editor-fold>
 }

@@ -141,8 +141,10 @@ public class EditTeam extends javax.swing.JDialog {
             com.leandrobaena.kickoff.logic.Team mgrTeam = new com.leandrobaena.kickoff.logic.Team(properties);
             if (this.team.getIdTeam() == 0) {
                 mgrTeam.insert(this.team);
+                JOptionPane.showMessageDialog(null, "Equipo insertado con éxito");
             } else {
                 mgrTeam.update(this.team);
+                JOptionPane.showMessageDialog(null, "Equipo actualizado con éxito");
             }
             ListTeamTableModel model = ListTeamTableModel.getInstance();
             model.setTeams(mgrTeam.list());
