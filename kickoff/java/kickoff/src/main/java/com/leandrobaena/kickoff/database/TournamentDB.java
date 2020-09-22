@@ -13,7 +13,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class TournamentMgr {
+public class TournamentDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -24,7 +24,7 @@ public class TournamentMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public TournamentMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public TournamentDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>
@@ -39,10 +39,9 @@ public class TournamentMgr {
     public ArrayList<Tournament> list() throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select("SELECT idtournament, name FROM tournament");
         ArrayList<Tournament> list = new ArrayList<>();
-        for (HashMap<String, String> row : table) {
-            Tournament t = new Tournament(Integer.parseInt(row.get("idteam")), row.get("name"));
+        table.stream().map(row -> new Tournament(Integer.parseInt(row.get("idtournament")), row.get("name"))).forEachOrdered(t -> {
             list.add(t);
-        }
+        });
         return list;
     }
 
@@ -69,9 +68,9 @@ public class TournamentMgr {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT name FROM tournament "
                 + "WHERE idtournament = " + tournament.getIdTournament());
-        for (HashMap<String, String> row : table) {
+        table.forEach(row -> {
             tournament.setName(row.get("name"));
-        }
+        });
     }
 
     /**

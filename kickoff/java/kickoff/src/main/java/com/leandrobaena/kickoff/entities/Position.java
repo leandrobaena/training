@@ -26,9 +26,14 @@ public class Position {
      * Crea una tabla de posiciones con el identificador, grupo, equipo,
      * partidos ganados, empatados, perdidos, goles a favor y en contra
      *
-     * @param idPosition
-     * @param group
-     * @param team
+     * @param idPosition Identificador de la posición
+     * @param group Grupo al que pertenece el equipo en el torneo
+     * @param team Equipo en el torneo
+     * @param win Número de partidos ganados
+     * @param draw Número de partidos empatados
+     * @param lost Número de partidos perdidos
+     * @param goalsFor Goles a favor
+     * @param goalsAgainst Goles en contra
      */
     public Position(int idPosition, Group group, Team team, int win, int draw, int lost, int goalsFor, int goalsAgainst) {
         this.idPosition = idPosition;

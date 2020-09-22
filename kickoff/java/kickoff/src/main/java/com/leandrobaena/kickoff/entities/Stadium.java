@@ -12,6 +12,8 @@ public class Stadium {
      * Constructor por defecto del estadio
      */
     public Stadium() {
+        idStadium = 0;
+        name = "";
     }
 
     /**

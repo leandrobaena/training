@@ -13,7 +13,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class TeamMgr {
+public class TeamDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -24,7 +24,7 @@ public class TeamMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public TeamMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public TeamDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>
@@ -39,10 +39,9 @@ public class TeamMgr {
     public ArrayList<Team> list() throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select("SELECT idteam, name FROM team");
         ArrayList<Team> list = new ArrayList<>();
-        for (HashMap<String, String> row : table) {
-            Team t = new Team(Integer.parseInt(row.get("idteam")), row.get("name"));
+        table.stream().map(row -> new Team(Integer.parseInt(row.get("idteam")), row.get("name"))).forEachOrdered(t -> {
             list.add(t);
-        }
+        });
         return list;
     }
 
@@ -69,9 +68,9 @@ public class TeamMgr {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT name FROM team "
                 + "WHERE idteam = " + team.getIdTeam());
-        for (HashMap<String, String> row : table) {
+        table.forEach(row -> {
             team.setName(row.get("name"));
-        }
+        });
     }
 
     /**

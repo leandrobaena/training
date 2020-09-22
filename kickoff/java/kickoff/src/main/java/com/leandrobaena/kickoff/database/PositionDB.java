@@ -16,7 +16,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class PositionMgr {
+public class PositionDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -28,7 +28,7 @@ public class PositionMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public PositionMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public PositionDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>
@@ -47,25 +47,24 @@ public class PositionMgr {
                 + "team, win, draw, "
                 + "lost, goal_for, goal_against FROM vw_position");
         ArrayList<Position> list = new ArrayList<>();
-        for (HashMap<String, String> row : table) {
-            Position p = new Position(
-                    Integer.parseInt(row.get("idposition")),
-                    new Group(
-                            Integer.parseInt(row.get("idgroup")),
-                            row.get("group"),
-                            new Tournament(
-                                    Integer.parseInt(row.get("idtournament")),
-                                    row.get("tournament"))),
-                    new Team(
-                            Integer.parseInt(row.get("idteam")),
-                            row.get("team")),
-                    Integer.parseInt(row.get("win")),
-                    Integer.parseInt(row.get("draw")),
-                    Integer.parseInt(row.get("lost")),
-                    Integer.parseInt(row.get("goal_for")),
-                    Integer.parseInt(row.get("goal_against")));
-            list.add(p);
-        }
+        table.stream().map(row -> new Position(
+                Integer.parseInt(row.get("idposition")),
+                new Group(
+                        Integer.parseInt(row.get("idgroup")),
+                        row.get("group"),
+                        new Tournament(
+                                Integer.parseInt(row.get("idtournament")),
+                                row.get("tournament"))),
+                new Team(
+                        Integer.parseInt(row.get("idteam")),
+                        row.get("team")),
+                Integer.parseInt(row.get("win")),
+                Integer.parseInt(row.get("draw")),
+                Integer.parseInt(row.get("lost")),
+                Integer.parseInt(row.get("goal_for")),
+                Integer.parseInt(row.get("goal_against")))).forEachOrdered(p -> {
+                    list.add(p);
+        });
         return list;
     }
 
@@ -98,22 +97,34 @@ public class PositionMgr {
                 + "team, win, draw, "
                 + "lost, goal_for, goal_against FROM vw_position "
                 + "WHERE idposition = " + position.getIdPosition());
-        for (HashMap<String, String> row : table) {
+        table.stream().map(row -> {
             position.setGroup(new Group(
                     Integer.parseInt(row.get("idgroup")),
                     row.get("group"),
                     new Tournament(
                             Integer.parseInt(row.get("idtournament")),
                             row.get("tournament"))));
+            return row;
+        }).map(row -> {
             position.setTeam(new Team(
                     Integer.parseInt(row.get("idteam")),
                     row.get("team")));
+            return row;
+        }).map(row -> {
             position.setWin(Integer.parseInt(row.get("win")));
+            return row;
+        }).map(row -> {
             position.setDraw(Integer.parseInt(row.get("draw")));
+            return row;
+        }).map(row -> {
             position.setLost(Integer.parseInt(row.get("lost")));
+            return row;
+        }).map(row -> {
             position.setGoalFor(Integer.parseInt(row.get("goal_for")));
+            return row;
+        }).forEachOrdered(row -> {
             position.setGoalAgainst(Integer.parseInt(row.get("goal_against")));
-        }
+        });
     }
 
     /**

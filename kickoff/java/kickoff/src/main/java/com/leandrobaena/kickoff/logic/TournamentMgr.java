@@ -1,6 +1,7 @@
 package com.leandrobaena.kickoff.logic;
 
-import com.leandrobaena.kickoff.database.TeamMgr;
+import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.database.TournamentDB;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -8,15 +9,15 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 /**
- * Maneja los equipos que pertenecen a un torneo
+ * Maneja los torneos
  *
  * @author Leandro Baena Torres
  */
-public class Team {
+public class TournamentMgr {
 
-    //<editor-fold desc="Atributos" defaultstate="collapsed">
+    //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Crea un administrador de equipos que pertenecen a un torneo
+     * Crea un administrador de torneos
      *
      * @param properties Propiedades de la conexión a la base de datos
      * @throws IOException Si no puede abrir el archivo de propiedades de
@@ -26,59 +27,59 @@ public class Team {
      * @throws SQLException Si hubo un problema en la conexión a la base de
      * datos
      */
-    public Team(Properties properties)
+    public TournamentMgr(Properties properties)
             throws IOException, FileNotFoundException, SQLException {
-        teamMgr = new TeamMgr(properties);
+        tournamentDB = new TournamentDB(properties);
     }
     //</editor-fold>
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
     /**
-     * Trae el listado de equipos desde la base de datos
+     * Trae el listado de torneos desde la base de datos
      *
-     * @return Listado de equipos
+     * @return Listado de torneos
      * @throws SQLException Si hubo un error en la consulta
      */
-    public ArrayList<com.leandrobaena.kickoff.entities.Team> list()
+    public ArrayList<Tournament> list()
             throws SQLException {
-        return teamMgr.list();
+        return tournamentDB.list();
     }
 
     /**
-     * Inserta un equipo en la base de datos
+     * Inserta un torneo en la base de datos
      *
-     * @param team Nuevo equipo a insertar
+     * @param tournament Nuevo torneo a insertar
      * @throws SQLException Si hubo un error en la consulta
      */
-    public void insert(com.leandrobaena.kickoff.entities.Team team) throws SQLException {
-        teamMgr.insert(team);
+    public void insert(Tournament tournament) throws SQLException {
+        tournamentDB.insert(tournament);
     }
 
     /**
-     * Actualiza un equipo en la base de datos
+     * Actualiza un torneo en la base de datos
      *
-     * @param team Nuevo equipo a actualizar
+     * @param tournament Nuevo torneo a actualizar
      * @throws SQLException Si hubo un error en la consulta
      */
-    public void update(com.leandrobaena.kickoff.entities.Team team) throws SQLException {
-        teamMgr.update(team);
+    public void update(Tournament tournament) throws SQLException {
+        tournamentDB.update(tournament);
     }
 
     /**
-     * Elimina un equipo en la base de datos
+     * Elimina un torneo en la base de datos
      *
-     * @param team Nuevo equipo a eliminar
+     * @param tournament Nuevo torneo a eliminar
      * @throws SQLException Si hubo un error en la consulta
      */
-    public void delete(com.leandrobaena.kickoff.entities.Team team) throws SQLException {
-        teamMgr.delete(team);
+    public void delete(Tournament tournament) throws SQLException {
+        tournamentDB.delete(tournament);
     }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
     /**
-     * Administrador de persistencia del equipo en la base de datos
+     * Administrador de persistencia del torneo en la base de datos
      */
-    private TeamMgr teamMgr;
+    private final TournamentDB tournamentDB;
     //</editor-fold>
 }

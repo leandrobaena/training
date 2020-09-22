@@ -14,7 +14,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class GroupMgr {
+public class GroupDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -25,7 +25,7 @@ public class GroupMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public GroupMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public GroupDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>
@@ -40,16 +40,15 @@ public class GroupMgr {
     public ArrayList<Group> list() throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT idgroup, name, idtournament, tournament FROM vw_group");
-        ArrayList<Group> list = new ArrayList<>();
-        for (HashMap<String, String> row : table) {
-            Group g = new Group(
-                    Integer.parseInt(row.get("idgroup")),
-                    row.get("name"),
-                    new Tournament(
-                            Integer.parseInt(row.get("idtournament")),
-                            row.get("tournament")));
-            list.add(g);
-        }
+        ArrayList<com.leandrobaena.kickoff.entities.Group> list = new ArrayList<>();
+        table.stream().map(row -> new com.leandrobaena.kickoff.entities.Group(
+                Integer.parseInt(row.get("idgroup")),
+                row.get("name"),
+                new Tournament(
+                        Integer.parseInt(row.get("idtournament")),
+                        row.get("tournament")))).forEachOrdered(g -> {
+                            list.add(g);
+        });
         return list;
     }
 
@@ -76,10 +75,12 @@ public class GroupMgr {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT idgroup, name, idtournament, tournament FROM vw_group "
                 + "WHERE idgroup = " + group.getIdGroup());
-        for (HashMap<String, String> row : table) {
+        table.stream().map(row -> {
             group.setName(row.get("name"));
+            return row;
+        }).forEachOrdered(row -> {
             group.setTournament(new Tournament(Integer.parseInt(row.get("idtournament")), row.get("tournament")));
-        }
+        });
     }
 
     /**

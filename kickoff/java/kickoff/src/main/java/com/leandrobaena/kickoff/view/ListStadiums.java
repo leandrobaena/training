@@ -1,8 +1,8 @@
 package com.leandrobaena.kickoff.view;
 
-import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.TeamMgr;
-import com.leandrobaena.kickoff.view.tablemodel.ListTeamTableModel;
+import com.leandrobaena.kickoff.entities.Stadium;
+import com.leandrobaena.kickoff.logic.StadiumMgr;
+import com.leandrobaena.kickoff.view.tablemodel.ListStadiumTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.io.FileInputStream;
@@ -20,23 +20,23 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author Leandro Baena Torres
  */
-public class ListTeams extends javax.swing.JPanel implements ListSelectionListener {
+public class ListStadiums extends javax.swing.JPanel implements ListSelectionListener {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Inicializa los componentes del listado de equipos
+     * Inicializa los componentes del listado de estadios
      *
      * @throws java.io.FileNotFoundException
      * @throws java.io.IOException
      * @throws java.sql.SQLException
      */
-    public ListTeams() throws FileNotFoundException, IOException, SQLException {
+    public ListStadiums() throws FileNotFoundException, IOException, SQLException {
         initComponents();
         Properties properties = new Properties();
         properties.load(new FileInputStream("settings_db.properties"));
-        teamMgr = new TeamMgr(properties);
-        ((ListTeamTableModel) tblTeams.getModel()).setTeams(teamMgr.list());
-        tblTeams.getSelectionModel().addListSelectionListener(this);
+        stadiumMgr = new StadiumMgr(properties);
+        ((ListStadiumTableModel) tblStadiums.getModel()).setStadiums(stadiumMgr.list());
+        tblStadiums.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
 
@@ -51,15 +51,15 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblTeams = new javax.swing.JTable();
+        tblStadiums = new javax.swing.JTable();
         btnInsert = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblTeams.setModel(ListTeamTableModel.getInstance());
-        tblTeams.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblTeams);
+        tblStadiums.setModel(ListStadiumTableModel.getInstance());
+        tblStadiums.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblStadiums);
 
         btnInsert.setText("Insertar");
         btnInsert.addActionListener(new java.awt.event.ActionListener() {
@@ -120,44 +120,44 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Muestra el formulario de inserción de un equipo
+     * Muestra el formulario de inserción de un estadio
      *
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditTeam editTeam = new EditTeam(new Team(), getJFrame());
-        editTeam.setVisible(true);
+        EditStadium editStadium = new EditStadium(new Stadium(), getJFrame());
+        editStadium.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
     /**
-     * Muestra el formulario de edición de un equipo
+     * Muestra el formulario de edición de un estadio
      *
      * @param evt Evento al hacer clic en el botón Editar
      */
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
+        Stadium selected = ((ListStadiumTableModel) tblStadiums.getModel()).getSelectedTeam(tblStadiums.getSelectedRow());
         if (selected != null) {
-            EditTeam editTeam = new EditTeam(selected, getJFrame());
-            editTeam.setVisible(true);
+            EditStadium editStadium = new EditStadium(selected, getJFrame());
+            editStadium.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     /**
-     * Elimina un equipo
+     * Elimina un estadio
      *
      * @param evt Evento al hacer clic en el botón Eliminar
      */
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
-            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el equipo?", "Borrar equipo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
-                teamMgr.delete(selected);
-                ListTeamTableModel model = ListTeamTableModel.getInstance();
-                model.setTeams(teamMgr.list());
-                JOptionPane.showMessageDialog(null, "Equipo eliminado con éxito");
+            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el estadio?", "Borrar estadio", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                Stadium selected = ((ListStadiumTableModel) tblStadiums.getModel()).getSelectedTeam(tblStadiums.getSelectedRow());
+                stadiumMgr.delete(selected);
+                ListStadiumTableModel model = ListStadiumTableModel.getInstance();
+                model.setStadiums(stadiumMgr.list());
+                JOptionPane.showMessageDialog(null, "Estadio eliminado con éxito");
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el equipo");
+            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el estadio");
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -208,7 +208,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
      */
     @Override
     public void valueChanged(ListSelectionEvent evt) {
-        if (tblTeams.getSelectedRow() != -1) {
+        if (tblStadiums.getSelectedRow() != -1) {
             btnUpdate.setEnabled(true);
             btnDelete.setEnabled(true);
         }
@@ -222,8 +222,8 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private javax.swing.JButton btnInsert;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblTeams;
+    private javax.swing.JTable tblStadiums;
     // End of variables declaration//GEN-END:variables
-    private TeamMgr teamMgr;
+    private StadiumMgr stadiumMgr;
     //</editor-fold>
 }

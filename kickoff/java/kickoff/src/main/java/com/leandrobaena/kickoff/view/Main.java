@@ -36,6 +36,8 @@ public class Main extends javax.swing.JFrame {
         menu = new javax.swing.JMenuBar();
         menuConfiguration = new javax.swing.JMenu();
         itemTeams = new javax.swing.JMenuItem();
+        itemTournaments = new javax.swing.JMenuItem();
+        itemStadiums = new javax.swing.JMenuItem();
         menuApplication = new javax.swing.JMenu();
         itemExit = new javax.swing.JMenuItem();
 
@@ -53,6 +55,22 @@ public class Main extends javax.swing.JFrame {
             }
         });
         menuConfiguration.add(itemTeams);
+
+        itemTournaments.setText("Torneos");
+        itemTournaments.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemTournamentsActionPerformed(evt);
+            }
+        });
+        menuConfiguration.add(itemTournaments);
+
+        itemStadiums.setText("Estadios");
+        itemStadiums.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemStadiumsActionPerformed(evt);
+            }
+        });
+        menuConfiguration.add(itemStadiums);
 
         menu.add(menuConfiguration);
 
@@ -106,7 +124,7 @@ public class Main extends javax.swing.JFrame {
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Hubi un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_itemTeamsActionPerformed
@@ -114,6 +132,38 @@ public class Main extends javax.swing.JFrame {
     private void itemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemExitActionPerformed
         System.exit(0);
     }//GEN-LAST:event_itemExitActionPerformed
+
+    private void itemTournamentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemTournamentsActionPerformed
+        if (mainPanel.indexOfTab("Listado de torneos") == -1) {
+            ListTournaments listTournaments;
+            try {
+                listTournaments = new ListTournaments();
+                mainPanel.add("Listado de torneos", listTournaments);
+            } catch (FileNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_itemTournamentsActionPerformed
+
+    private void itemStadiumsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemStadiumsActionPerformed
+        if (mainPanel.indexOfTab("Listado de estadios") == -1) {
+            ListStadiums listStadiums;
+            try {
+                listStadiums = new ListStadiums();
+                mainPanel.add("Listado de estadios", listStadiums);
+            } catch (FileNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_itemStadiumsActionPerformed
 
     /**
      * Programa principal
@@ -144,7 +194,9 @@ public class Main extends javax.swing.JFrame {
     //<editor-fold desc="Atributos" defaultstate="collapsed">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem itemExit;
+    private javax.swing.JMenuItem itemStadiums;
     private javax.swing.JMenuItem itemTeams;
+    private javax.swing.JMenuItem itemTournaments;
     private javax.swing.JTabbedPane mainPanel;
     private javax.swing.JMenuBar menu;
     private javax.swing.JMenu menuApplication;

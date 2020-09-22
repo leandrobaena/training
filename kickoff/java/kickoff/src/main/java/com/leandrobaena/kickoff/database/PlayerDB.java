@@ -14,7 +14,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class PlayerMgr {
+public class PlayerDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -25,7 +25,7 @@ public class PlayerMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public PlayerMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public PlayerDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>
@@ -41,13 +41,12 @@ public class PlayerMgr {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT idplayer, name, dorsal, idteam, team FROM vw_player");
         ArrayList<Player> list = new ArrayList<>();
-        for (HashMap<String, String> row : table) {
-            Player t = new Player(Integer.parseInt(row.get("idplayer")),
-                    row.get("name"),
-                    row.get("dorsal"),
-                    new Team(Integer.parseInt(row.get("idteam")), row.get("team")));
-            list.add(t);
-        }
+        table.stream().map(row -> new Player(Integer.parseInt(row.get("idplayer")),
+                row.get("name"),
+                row.get("dorsal"),
+                new Team(Integer.parseInt(row.get("idteam")), row.get("team")))).forEachOrdered(t -> {
+                    list.add(t);
+        });
         return list;
     }
 
@@ -74,11 +73,15 @@ public class PlayerMgr {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT idplayer, name, dorsal, idteam, team FROM vw_player "
                 + "WHERE idplayer = " + player.getIdPlayer());
-        for (HashMap<String, String> row : table) {
+        table.stream().map(row -> {
             player.setName(row.get("name"));
+            return row;
+        }).map(row -> {
             player.setDorsal(row.get("dorsal"));
+            return row;
+        }).forEachOrdered(row -> {
             player.setTeam(new Team(Integer.parseInt(row.get("idteam")), row.get("team")));
-        }
+        });
     }
 
     /**

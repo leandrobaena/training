@@ -13,7 +13,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class StadiumMgr {
+public class StadiumDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -24,7 +24,7 @@ public class StadiumMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public StadiumMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public StadiumDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>
@@ -39,10 +39,9 @@ public class StadiumMgr {
     public ArrayList<Stadium> list() throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select("SELECT idstadium, name FROM stadium");
         ArrayList<Stadium> list = new ArrayList<>();
-        for (HashMap<String, String> row : table) {
-            Stadium s = new Stadium(Integer.parseInt(row.get("idstadium")), row.get("name"));
+        table.stream().map(row -> new Stadium(Integer.parseInt(row.get("idstadium")), row.get("name"))).forEachOrdered(s -> {
             list.add(s);
-        }
+        });
         return list;
     }
 
@@ -69,9 +68,9 @@ public class StadiumMgr {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT name FROM stadium "
                 + "WHERE idstadium = " + stadium.getIdStadium());
-        for (HashMap<String, String> row : table) {
+        table.forEach(row -> {
             stadium.setName(row.get("name"));
-        }
+        });
     }
 
     /**

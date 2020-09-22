@@ -13,7 +13,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class ParameterMgr {
+public class ParameterDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -24,7 +24,7 @@ public class ParameterMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public ParameterMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public ParameterDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>
@@ -39,10 +39,9 @@ public class ParameterMgr {
     public ArrayList<Parameter> list() throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select("SELECT idparameter, name, value FROM parameter");
         ArrayList<Parameter> list = new ArrayList<>();
-        for (HashMap<String, String> row : table) {
-            Parameter p = new Parameter(Integer.parseInt(row.get("idparameter")), row.get("name"), row.get("value"));
+        table.stream().map(row -> new Parameter(Integer.parseInt(row.get("idparameter")), row.get("name"), row.get("value"))).forEachOrdered(p -> {
             list.add(p);
-        }
+        });
         return list;
     }
 
@@ -69,10 +68,12 @@ public class ParameterMgr {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT name, value FROM parameter "
                 + "WHERE idparameter = " + parameter.getIdParameter());
-        for (HashMap<String, String> row : table) {
+        table.stream().map(row -> {
             parameter.setName(row.get("name"));
+            return row;
+        }).forEachOrdered(row -> {
             parameter.setValue(row.get("value"));
-        }
+        });
     }
 
     /**

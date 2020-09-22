@@ -1,8 +1,9 @@
 package com.leandrobaena.kickoff.view;
 
-import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.TeamMgr;
+import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.logic.TournamentMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListTeamTableModel;
+import com.leandrobaena.kickoff.view.tablemodel.ListTournamentTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.io.FileInputStream;
@@ -16,27 +17,27 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * Listado de equipos de un torneo
+ * Listado de torneos
  *
  * @author Leandro Baena Torres
  */
-public class ListTeams extends javax.swing.JPanel implements ListSelectionListener {
+public class ListTournaments extends javax.swing.JPanel implements ListSelectionListener {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Inicializa los componentes del listado de equipos
+     * Inicializa los componentes del listado de torneos
      *
      * @throws java.io.FileNotFoundException
      * @throws java.io.IOException
      * @throws java.sql.SQLException
      */
-    public ListTeams() throws FileNotFoundException, IOException, SQLException {
+    public ListTournaments() throws FileNotFoundException, IOException, SQLException {
         initComponents();
         Properties properties = new Properties();
         properties.load(new FileInputStream("settings_db.properties"));
-        teamMgr = new TeamMgr(properties);
-        ((ListTeamTableModel) tblTeams.getModel()).setTeams(teamMgr.list());
-        tblTeams.getSelectionModel().addListSelectionListener(this);
+        tournamentMgr = new TournamentMgr(properties);
+        ((ListTournamentTableModel) tblTournaments.getModel()).setTournaments(tournamentMgr.list());
+        tblTournaments.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
 
@@ -51,15 +52,15 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblTeams = new javax.swing.JTable();
+        tblTournaments = new javax.swing.JTable();
         btnInsert = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblTeams.setModel(ListTeamTableModel.getInstance());
-        tblTeams.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblTeams);
+        tblTournaments.setModel(ListTournamentTableModel.getInstance());
+        tblTournaments.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblTournaments);
 
         btnInsert.setText("Insertar");
         btnInsert.addActionListener(new java.awt.event.ActionListener() {
@@ -120,51 +121,51 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Muestra el formulario de inserción de un equipo
+     * Muestra el formulario de inserción de un torneo
      *
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditTeam editTeam = new EditTeam(new Team(), getJFrame());
-        editTeam.setVisible(true);
+        EditTournament editTournament = new EditTournament(new Tournament(), getJFrame());
+        editTournament.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
     /**
-     * Muestra el formulario de edición de un equipo
+     * Muestra el formulario de edición de un torneo
      *
      * @param evt Evento al hacer clic en el botón Editar
      */
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
+        Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTeam(tblTournaments.getSelectedRow());
         if (selected != null) {
-            EditTeam editTeam = new EditTeam(selected, getJFrame());
-            editTeam.setVisible(true);
+            EditTournament editTournament = new EditTournament(selected, getJFrame());
+            editTournament.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     /**
-     * Elimina un equipo
+     * Elimina un torneo
      *
      * @param evt Evento al hacer clic en el botón Eliminar
      */
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
-            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el equipo?", "Borrar equipo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
-                teamMgr.delete(selected);
-                ListTeamTableModel model = ListTeamTableModel.getInstance();
-                model.setTeams(teamMgr.list());
-                JOptionPane.showMessageDialog(null, "Equipo eliminado con éxito");
+            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el torneo?", "Borrar torneo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTeam(tblTournaments.getSelectedRow());
+                tournamentMgr.delete(selected);
+                ListTournamentTableModel model = ListTournamentTableModel.getInstance();
+                model.setTournaments(tournamentMgr.list());
+                JOptionPane.showMessageDialog(null, "Torneo eliminado con éxito");
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el equipo");
+            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el torneo");
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
-     * Cierra la pestaña de equipos
+     * Cierra la pestaña
      *
-     * @param evt Evento al hacer clic en el botón Actualizar
+     * @param evt Evento al hacer clic en el botón Cerrar
      */
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
         Container current = this;
@@ -177,7 +178,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     }//GEN-LAST:event_btnCloseActionPerformed
 
     /**
-     * Dibuja el componente del listado de equipos
+     * Dibuja el componente del listado de torneos
      *
      * @param g Área gráfica a pintar
      */
@@ -208,7 +209,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
      */
     @Override
     public void valueChanged(ListSelectionEvent evt) {
-        if (tblTeams.getSelectedRow() != -1) {
+        if (tblTournaments.getSelectedRow() != -1) {
             btnUpdate.setEnabled(true);
             btnDelete.setEnabled(true);
         }
@@ -222,8 +223,8 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private javax.swing.JButton btnInsert;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblTeams;
+    private javax.swing.JTable tblTournaments;
     // End of variables declaration//GEN-END:variables
-    private TeamMgr teamMgr;
+    private TournamentMgr tournamentMgr;
     //</editor-fold>
 }

@@ -1,8 +1,8 @@
 package com.leandrobaena.kickoff.view;
 
-import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.TeamMgr;
-import com.leandrobaena.kickoff.view.tablemodel.ListTeamTableModel;
+import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.logic.TournamentMgr;
+import com.leandrobaena.kickoff.view.tablemodel.ListTournamentTableModel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,26 +12,26 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
- * Formulario de edición de un equipo
+ * Formulario de edición de un torneo
  *
  * @author Leandro Baena Torres
  */
-public class EditTeam extends javax.swing.JDialog {
+public class EditTournament extends javax.swing.JDialog {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Crea un nuevo formulario de edición de un equipo
      *
-     * @param team Equipo que va a editar o insertar
+     * @param tournament Equipo que va a editar o insertar
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditTeam(Team team, JFrame owner) {
+    public EditTournament(Tournament tournament, JFrame owner) {
         super(owner, true);
         initComponents();
-        this.team = team;
-        this.txtIdentification.setText("" + this.team.getIdTeam());
-        this.txtName.setText("" + this.team.getName());
+        this.tournament = tournament;
+        this.txtIdentification.setText("" + this.tournament.getIdTournament());
+        this.txtName.setText("" + this.tournament.getName());
     }
     //</editor-fold>
 
@@ -53,7 +53,7 @@ public class EditTeam extends javax.swing.JDialog {
         btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Editar equipo");
+        setTitle("Editar torneo");
         setResizable(false);
 
         lblIdentification.setText("Identificador:");
@@ -130,25 +130,25 @@ public class EditTeam extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
-     * Inserta o actualiza un equipo
+     * Inserta o actualiza un torneo
      *
-     * @param evt Evento de clic sobre el botón
+     * @param evt Evento de clic sobre el botón Aceptar
      */
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        this.team.setName(this.txtName.getText());
+        this.tournament.setName(this.txtName.getText());
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream("settings_db.properties"));
-            TeamMgr mgrTeam = new TeamMgr(properties);
-            if (this.team.getIdTeam() == 0) {
-                mgrTeam.insert(this.team);
-                JOptionPane.showMessageDialog(null, "Equipo insertado con éxito");
+            TournamentMgr mgrTournament = new TournamentMgr(properties);
+            if (this.tournament.getIdTournament()== 0) {
+                mgrTournament.insert(this.tournament);
+                JOptionPane.showMessageDialog(null, "Torneo insertado con éxito");
             } else {
-                mgrTeam.update(this.team);
-                JOptionPane.showMessageDialog(null, "Equipo actualizado con éxito");
+                mgrTournament.update(this.tournament);
+                JOptionPane.showMessageDialog(null, "Torneo actualizado con éxito");
             }
-            ListTeamTableModel model = ListTeamTableModel.getInstance();
-            model.setTeams(mgrTeam.list());
+            ListTournamentTableModel model = ListTournamentTableModel.getInstance();
+            model.setTournaments(mgrTournament.list());
             this.dispose();
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -169,6 +169,6 @@ public class EditTeam extends javax.swing.JDialog {
     private javax.swing.JTextField txtIdentification;
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
-    private final Team team;
+    private final Tournament tournament;
     //</editor-fold>
 }

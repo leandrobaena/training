@@ -12,8 +12,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -22,7 +20,7 @@ import java.util.Properties;
  *
  * @author Leandro Baena Torres
  */
-public class FixtureMgr {
+public class FixtureDB {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
@@ -33,7 +31,7 @@ public class FixtureMgr {
      * @throws FileNotFoundException Si no encuentra el archivo de propiedades
      * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public FixtureMgr(Properties properties) throws IOException, FileNotFoundException, SQLException {
+    public FixtureDB(Properties properties) throws IOException, FileNotFoundException, SQLException {
         connection = new Connection(properties);
     }
     //</editor-fold>

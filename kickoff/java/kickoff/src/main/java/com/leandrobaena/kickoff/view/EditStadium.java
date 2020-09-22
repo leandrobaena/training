@@ -1,8 +1,8 @@
 package com.leandrobaena.kickoff.view;
 
-import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.TeamMgr;
-import com.leandrobaena.kickoff.view.tablemodel.ListTeamTableModel;
+import com.leandrobaena.kickoff.entities.Stadium;
+import com.leandrobaena.kickoff.logic.StadiumMgr;
+import com.leandrobaena.kickoff.view.tablemodel.ListStadiumTableModel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,26 +12,26 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
- * Formulario de edición de un equipo
+ * Formulario de edición de un estadio
  *
  * @author Leandro Baena Torres
  */
-public class EditTeam extends javax.swing.JDialog {
+public class EditStadium extends javax.swing.JDialog {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Crea un nuevo formulario de edición de un equipo
+     * Crea un nuevo formulario de edición de un estadio
      *
-     * @param team Equipo que va a editar o insertar
+     * @param stadium Estadio que va a editar o insertar
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditTeam(Team team, JFrame owner) {
+    public EditStadium(Stadium stadium, JFrame owner) {
         super(owner, true);
         initComponents();
-        this.team = team;
-        this.txtIdentification.setText("" + this.team.getIdTeam());
-        this.txtName.setText("" + this.team.getName());
+        this.stadium = stadium;
+        this.txtIdentification.setText("" + this.stadium.getIdStadium());
+        this.txtName.setText("" + this.stadium.getName());
     }
     //</editor-fold>
 
@@ -53,7 +53,7 @@ public class EditTeam extends javax.swing.JDialog {
         btnCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Editar equipo");
+        setTitle("Editar estadio");
         setResizable(false);
 
         lblIdentification.setText("Identificador:");
@@ -135,20 +135,20 @@ public class EditTeam extends javax.swing.JDialog {
      * @param evt Evento de clic sobre el botón
      */
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        this.team.setName(this.txtName.getText());
+        this.stadium.setName(this.txtName.getText());
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream("settings_db.properties"));
-            TeamMgr mgrTeam = new TeamMgr(properties);
-            if (this.team.getIdTeam() == 0) {
-                mgrTeam.insert(this.team);
-                JOptionPane.showMessageDialog(null, "Equipo insertado con éxito");
+            StadiumMgr mgrStadium = new StadiumMgr(properties);
+            if (this.stadium.getIdStadium()== 0) {
+                mgrStadium.insert(this.stadium);
+                JOptionPane.showMessageDialog(null, "Estadio insertado con éxito");
             } else {
-                mgrTeam.update(this.team);
-                JOptionPane.showMessageDialog(null, "Equipo actualizado con éxito");
+                mgrStadium.update(this.stadium);
+                JOptionPane.showMessageDialog(null, "Estadio actualizado con éxito");
             }
-            ListTeamTableModel model = ListTeamTableModel.getInstance();
-            model.setTeams(mgrTeam.list());
+            ListStadiumTableModel model = ListStadiumTableModel.getInstance();
+            model.setStadiums(mgrStadium.list());
             this.dispose();
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -169,6 +169,6 @@ public class EditTeam extends javax.swing.JDialog {
     private javax.swing.JTextField txtIdentification;
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
-    private final Team team;
+    private final Stadium stadium;
     //</editor-fold>
 }
