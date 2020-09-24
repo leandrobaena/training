@@ -139,16 +139,16 @@ public class EditStadium extends javax.swing.JDialog {
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream("settings_db.properties"));
-            StadiumMgr mgrStadium = new StadiumMgr(properties);
+            StadiumMgr stadiumMgr = new StadiumMgr(properties);
             if (this.stadium.getIdStadium()== 0) {
-                mgrStadium.insert(this.stadium);
+                stadiumMgr.insert(this.stadium);
                 JOptionPane.showMessageDialog(null, "Estadio insertado con éxito");
             } else {
-                mgrStadium.update(this.stadium);
+                stadiumMgr.update(this.stadium);
                 JOptionPane.showMessageDialog(null, "Estadio actualizado con éxito");
             }
             ListStadiumTableModel model = ListStadiumTableModel.getInstance();
-            model.setStadiums(mgrStadium.list());
+            model.setStadiums(stadiumMgr.list());
             this.dispose();
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);

@@ -1,22 +1,22 @@
 package com.leandrobaena.kickoff.view.tablemodel;
 
-import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.entities.Group;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * Modelo de la table de torneos
+ * Modelo de la table de grupos
  *
  * @author Leandro Baena Torres
  */
-public class ListTournamentTableModel extends DefaultTableModel {
+public class ListGroupTableModel extends DefaultTableModel {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Crea un modelo de tabla para el listado de torneos
+     * Crea un modelo de tabla para el listado de grupos
      */
-    private ListTournamentTableModel() {
-        this.tournament = new ArrayList<>();
+    private ListGroupTableModel() {
+        this.groups = new ArrayList<>();
     }
     //</editor-fold>
 
@@ -26,20 +26,20 @@ public class ListTournamentTableModel extends DefaultTableModel {
      *
      * @return Única instancia de esta clase
      */
-    public static ListTournamentTableModel getInstance() {
+    public static ListGroupTableModel getInstance() {
         if (instance == null) {
-            instance = new ListTournamentTableModel();
+            instance = new ListGroupTableModel();
         }
         return instance;
     }
 
     /**
-     * Actualiza el listado de torneos
+     * Actualiza el listado de grupos
      *
-     * @param tournament Nuevo listado de torneos
+     * @param groups Nuevo listado de grupos
      */
-    public void setTournaments(ArrayList<Tournament> tournament) {
-        this.tournament = tournament;
+    public void setGroups(ArrayList<Group> groups) {
+        this.groups = groups;
         this.fireTableDataChanged();
     }
 
@@ -50,7 +50,7 @@ public class ListTournamentTableModel extends DefaultTableModel {
      */
     @Override
     public int getRowCount() {
-        return tournament != null ? tournament.size() : 0;
+        return groups != null ? groups.size() : 0;
     }
 
     /**
@@ -92,34 +92,34 @@ public class ListTournamentTableModel extends DefaultTableModel {
     public Object getValueAt(int row, int col) {
         return switch (col) {
             case 0 ->
-                tournament.get(row).getIdTournament();
+                groups.get(row).getIdGroup();
             case 1 ->
-                tournament.get(row).getName();
+                groups.get(row).getName();
             default ->
                 "";
         };
     }
 
     /**
-     * Trae el torneo seleccionado
+     * Trae el grupo seleccionado
      *
      * @param row Fila seleccionada
-     * @return Torneo seleccionado
+     * @return Grupo seleccionado
      */
-    public Tournament getSelectedTournament(int row) {
-        return tournament.get(row);
+    public Group getSelectedGroup(int row) {
+        return groups.get(row);
     }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
     /**
-     * Listado de torneos
+     * Listado de grupos
      */
-    private ArrayList<Tournament> tournament;
+    private ArrayList<Group> groups;
 
     /**
-     * Única instancia del modelo de la tabla de equipos
+     * Única instancia del modelo de la tabla de grupos
      */
-    private static ListTournamentTableModel instance = null;
+    private static ListGroupTableModel instance = null;
     //</editor-fold>
 }

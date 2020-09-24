@@ -2,7 +2,6 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Tournament;
 import com.leandrobaena.kickoff.logic.TournamentMgr;
-import com.leandrobaena.kickoff.view.tablemodel.ListTeamTableModel;
 import com.leandrobaena.kickoff.view.tablemodel.ListTournamentTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
@@ -13,6 +12,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -57,6 +57,8 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
+        btnParameters = new javax.swing.JButton();
+        btnGroups = new javax.swing.JButton();
 
         tblTournaments.setModel(ListTournamentTableModel.getInstance());
         tblTournaments.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -93,6 +95,22 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
             }
         });
 
+        btnParameters.setText("Parámetros");
+        btnParameters.setEnabled(false);
+        btnParameters.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnParametersActionPerformed(evt);
+            }
+        });
+
+        btnGroups.setText("Grupos");
+        btnGroups.setEnabled(false);
+        btnGroups.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGroupsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -104,6 +122,10 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
                 .addComponent(btnUpdate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDelete)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnParameters)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGroups)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnClose))
         );
@@ -114,7 +136,9 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
                     .addComponent(btnInsert)
                     .addComponent(btnUpdate)
                     .addComponent(btnDelete)
-                    .addComponent(btnClose))
+                    .addComponent(btnClose)
+                    .addComponent(btnParameters)
+                    .addComponent(btnGroups))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
         );
@@ -136,7 +160,7 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
      * @param evt Evento al hacer clic en el botón Editar
      */
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTeam(tblTournaments.getSelectedRow());
+        Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTournament(tblTournaments.getSelectedRow());
         if (selected != null) {
             EditTournament editTournament = new EditTournament(selected, getJFrame());
             editTournament.setVisible(true);
@@ -151,7 +175,7 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
             if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el torneo?", "Borrar torneo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTeam(tblTournaments.getSelectedRow());
+                Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTournament(tblTournaments.getSelectedRow());
                 tournamentMgr.delete(selected);
                 ListTournamentTableModel model = ListTournamentTableModel.getInstance();
                 model.setTournaments(tournamentMgr.list());
@@ -168,14 +192,59 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
      * @param evt Evento al hacer clic en el botón Cerrar
      */
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        Container current = this;
-        Class c = current.getClass();
-        while (!"javax.swing.JTabbedPane".equals(c.getName())) {
-            current = current.getParent();
-            c = current.getClass();
-        }
-        ((javax.swing.JTabbedPane) current).remove(this);
+        getTabbedPane().remove(this);
     }//GEN-LAST:event_btnCloseActionPerformed
+
+    /**
+     * Muestra el listado de parámetros específicos de este torneo
+     *
+     * @param evt
+     */
+    private void btnParametersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnParametersActionPerformed
+        Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTournament(tblTournaments.getSelectedRow());
+        if (selected != null) {
+            int index = getTabbedPane().indexOfTab("Listado de parámetros del torneo " + selected.getName());
+            if (index == -1) {
+                ListParameters listParameters;
+                try {
+                    listParameters = new ListParameters(selected);
+                    getTabbedPane().add("Listado de parámetros del torneo " + selected.getName(), listParameters);
+                    getTabbedPane().setSelectedComponent(listParameters);
+                } catch (FileNotFoundException ex) {
+                    JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                getTabbedPane().setSelectedIndex(index);
+            }
+        }
+    }//GEN-LAST:event_btnParametersActionPerformed
+
+    private void btnGroupsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGroupsActionPerformed
+        Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTournament(tblTournaments.getSelectedRow());
+        if (selected != null) {
+            int index = getTabbedPane().indexOfTab("Listado de grupos del torneo " + selected.getName());
+            if (index == -1) {
+                ListGroups listGroups;
+                try {
+                    listGroups = new ListGroups(selected);
+                    getTabbedPane().add("Listado de grupos del torneo " + selected.getName(), listGroups);
+                    getTabbedPane().setSelectedComponent(listGroups);
+                } catch (FileNotFoundException ex) {
+                    JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                getTabbedPane().setSelectedIndex(index);
+            }
+        }
+    }//GEN-LAST:event_btnGroupsActionPerformed
 
     /**
      * Dibuja el componente del listado de torneos
@@ -212,7 +281,24 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
         if (tblTournaments.getSelectedRow() != -1) {
             btnUpdate.setEnabled(true);
             btnDelete.setEnabled(true);
+            btnParameters.setEnabled(true);
+            btnGroups.setEnabled(true);
         }
+    }
+
+    /**
+     * Trae el panel tabulado al que pertenece este panel
+     *
+     * @return Panel tabulado al que pertenece este panel
+     */
+    private JTabbedPane getTabbedPane() {
+        Container current = this;
+        Class c = current.getClass();
+        while (!"javax.swing.JTabbedPane".equals(c.getName())) {
+            current = current.getParent();
+            c = current.getClass();
+        }
+        return ((JTabbedPane) current);
     }
     //</editor-fold>
 
@@ -220,11 +306,13 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnGroups;
     private javax.swing.JButton btnInsert;
+    private javax.swing.JButton btnParameters;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblTournaments;
     // End of variables declaration//GEN-END:variables
-    private TournamentMgr tournamentMgr;
+    private final TournamentMgr tournamentMgr;
     //</editor-fold>
 }

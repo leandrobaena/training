@@ -34,12 +34,13 @@ public class GroupDB {
     /**
      * Trae el listado de grupos desde la base de datos
      *
+     * @param tournament Torneo por el que se fltran los grupos
      * @return Listado de grupos desde la base de datos
      * @throws SQLException Si hubo un error en la consulta
      */
-    public ArrayList<Group> list() throws SQLException {
+    public ArrayList<Group> list(Tournament tournament) throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select(
-                "SELECT idgroup, name, idtournament, tournament FROM vw_group");
+                "SELECT idgroup, name, idtournament, tournament FROM vw_group WHERE idtournament = " + tournament.getIdTournament());
         ArrayList<com.leandrobaena.kickoff.entities.Group> list = new ArrayList<>();
         table.stream().map(row -> new com.leandrobaena.kickoff.entities.Group(
                 Integer.parseInt(row.get("idgroup")),
@@ -47,7 +48,7 @@ public class GroupDB {
                 new Tournament(
                         Integer.parseInt(row.get("idtournament")),
                         row.get("tournament")))).forEachOrdered(g -> {
-                            list.add(g);
+            list.add(g);
         });
         return list;
     }
@@ -60,7 +61,7 @@ public class GroupDB {
      */
     public void insert(Group group) throws SQLException {
         group.setIdGroup(connection.insert(
-                "INSERT INTO group (name, idtournament) "
+                "INSERT INTO `group` (name, idtournament) "
                 + "VALUES "
                 + "('" + group.getName() + "', " + group.getTournament().getIdTournament() + ")"));
     }
@@ -91,9 +92,9 @@ public class GroupDB {
      */
     public void update(Group group) throws SQLException {
         connection.update(
-                "UPDATE group SET "
+                "UPDATE `group` SET "
                 + "name = '" + group.getName() + "', "
-                + "idtournament = " + group.getName()
+                + "idtournament = " + group.getTournament().getIdTournament()
                 + " WHERE idgroup = " + group.getIdGroup());
     }
 
@@ -104,7 +105,7 @@ public class GroupDB {
      * @throws SQLException Si hubo un error en la consulta
      */
     public void delete(Group group) throws SQLException {
-        connection.delete("DELETE FROM group WHERE idgroup = " + group.getIdGroup());
+        connection.delete("DELETE FROM `group` WHERE idgroup = " + group.getIdGroup());
     }
     //</editor-fold>
 

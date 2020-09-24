@@ -100,6 +100,12 @@ public class ListStadiumTableModel extends DefaultTableModel {
         };
     }
 
+    /**
+     * Trae el estadio seleccionado
+     *
+     * @param row Fila seleccionada
+     * @return Estadio seleccionado
+     */
     public Stadium getSelectedTeam(int row) {
         return stadiums.get(row);
     }

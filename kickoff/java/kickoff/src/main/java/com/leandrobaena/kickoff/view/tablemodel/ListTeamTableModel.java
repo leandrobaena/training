@@ -100,6 +100,12 @@ public class ListTeamTableModel extends DefaultTableModel {
         };
     }
 
+    /**
+     * Trae el equipo seleccionado
+     *
+     * @param row Fila seleccionada
+     * @return Equipo seleccionado
+     */
     public Team getSelectedTeam(int row) {
         return teams.get(row);
     }

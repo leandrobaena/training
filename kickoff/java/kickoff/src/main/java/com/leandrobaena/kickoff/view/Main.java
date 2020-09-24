@@ -38,6 +38,7 @@ public class Main extends javax.swing.JFrame {
         itemTeams = new javax.swing.JMenuItem();
         itemTournaments = new javax.swing.JMenuItem();
         itemStadiums = new javax.swing.JMenuItem();
+        itemParameters = new javax.swing.JMenuItem();
         menuApplication = new javax.swing.JMenu();
         itemExit = new javax.swing.JMenuItem();
 
@@ -71,6 +72,14 @@ public class Main extends javax.swing.JFrame {
             }
         });
         menuConfiguration.add(itemStadiums);
+
+        itemParameters.setText("Parámetros");
+        itemParameters.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemParametersActionPerformed(evt);
+            }
+        });
+        menuConfiguration.add(itemParameters);
 
         menu.add(menuConfiguration);
 
@@ -114,11 +123,13 @@ public class Main extends javax.swing.JFrame {
      * @param evt Evento de clic
      */
     private void itemTeamsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemTeamsActionPerformed
-        if (mainPanel.indexOfTab("Listado de equipos") == -1) {
+        int index = mainPanel.indexOfTab("Listado de equipos");
+        if (index == -1) {
             ListTeams listTeams;
             try {
                 listTeams = new ListTeams();
                 mainPanel.add("Listado de equipos", listTeams);
+                mainPanel.setSelectedComponent(listTeams);
             } catch (FileNotFoundException ex) {
                 JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
@@ -126,6 +137,8 @@ public class Main extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            mainPanel.setSelectedIndex(index);
         }
     }//GEN-LAST:event_itemTeamsActionPerformed
 
@@ -134,11 +147,13 @@ public class Main extends javax.swing.JFrame {
     }//GEN-LAST:event_itemExitActionPerformed
 
     private void itemTournamentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemTournamentsActionPerformed
-        if (mainPanel.indexOfTab("Listado de torneos") == -1) {
+        int index = mainPanel.indexOfTab("Listado de torneos");
+        if (index == -1) {
             ListTournaments listTournaments;
             try {
                 listTournaments = new ListTournaments();
                 mainPanel.add("Listado de torneos", listTournaments);
+                mainPanel.setSelectedComponent(listTournaments);
             } catch (FileNotFoundException ex) {
                 JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
@@ -146,15 +161,19 @@ public class Main extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            mainPanel.setSelectedIndex(index);
         }
     }//GEN-LAST:event_itemTournamentsActionPerformed
 
     private void itemStadiumsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemStadiumsActionPerformed
-        if (mainPanel.indexOfTab("Listado de estadios") == -1) {
+        int index = mainPanel.indexOfTab("Listado de estadios");
+        if (index == -1) {
             ListStadiums listStadiums;
             try {
                 listStadiums = new ListStadiums();
                 mainPanel.add("Listado de estadios", listStadiums);
+                mainPanel.setSelectedComponent(listStadiums);
             } catch (FileNotFoundException ex) {
                 JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
@@ -162,8 +181,30 @@ public class Main extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        } else {
+            mainPanel.setSelectedIndex(index);
         }
     }//GEN-LAST:event_itemStadiumsActionPerformed
+
+    private void itemParametersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemParametersActionPerformed
+        int index = mainPanel.indexOfTab("Listado de parámetros");
+        if (index == -1) {
+            ListParameters listParameters;
+            try {
+                listParameters = new ListParameters(null);
+                mainPanel.add("Listado de parámetros", listParameters);
+                mainPanel.setSelectedComponent(listParameters);
+            } catch (FileNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            mainPanel.setSelectedIndex(index);
+        }
+    }//GEN-LAST:event_itemParametersActionPerformed
 
     /**
      * Programa principal
@@ -194,6 +235,7 @@ public class Main extends javax.swing.JFrame {
     //<editor-fold desc="Atributos" defaultstate="collapsed">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem itemExit;
+    private javax.swing.JMenuItem itemParameters;
     private javax.swing.JMenuItem itemStadiums;
     private javax.swing.JMenuItem itemTeams;
     private javax.swing.JMenuItem itemTournaments;

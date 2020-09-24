@@ -15,6 +15,24 @@ public class Parameter {
         idParameter = 0;
         name = "";
         value = "";
+        tournament = null;
+    }
+
+    /**
+     * Crea un parámetro del sistema con un identificador, nombre, valor y
+     * torneo al que pertenece
+     *
+     * @param idParameter Identificador del parámetro
+     * @param name Nombre del parámetro
+     * @param value Valor del parámetro
+     * @param tournament Torneo al que pertenece el parámetro o null si es
+     * general
+     */
+    public Parameter(int idParameter, String name, String value, Tournament tournament) {
+        this.idParameter = idParameter;
+        this.name = name;
+        this.value = value;
+        this.tournament = tournament;
     }
 
     /**
@@ -25,9 +43,7 @@ public class Parameter {
      * @param value Valor del parámetro
      */
     public Parameter(int idParameter, String name, String value) {
-        this.idParameter = idParameter;
-        this.name = name;
-        this.value = value;
+        this(idParameter, name, value, null);
     }
     //</editor-fold>
 
@@ -85,6 +101,24 @@ public class Parameter {
     public void setValue(String value) {
         this.value = value;
     }
+
+    /**
+     * Trae el torneo al que pertenece el parámetro
+     *
+     * @return Torneo al que pertenece el parámetro
+     */
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    /**
+     * Cambia el torneo al que pertenece el parámetro
+     *
+     * @param tournament Nuevo torneo al que pertenece el parámetro
+     */
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
@@ -92,15 +126,20 @@ public class Parameter {
      * Identificador del parámetro
      */
     private int idParameter;
-    
+
     /**
      * Nombre del parámetro
      */
     private String name;
-    
+
     /**
      * Valor del parámetro
      */
     private String value;
+
+    /**
+     * Torneo al que pertenece el parámetro o null si es general
+     */
+    private Tournament tournament;
     //</editor-fold>
 }

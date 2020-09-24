@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -167,13 +168,7 @@ public class ListStadiums extends javax.swing.JPanel implements ListSelectionLis
      * @param evt Evento al hacer clic en el botón Actualizar
      */
     private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-        Container current = this;
-        Class c = current.getClass();
-        while (!"javax.swing.JTabbedPane".equals(c.getName())) {
-            current = current.getParent();
-            c = current.getClass();
-        }
-        ((javax.swing.JTabbedPane) current).remove(this);
+        getTabbedPane().remove(this);
     }//GEN-LAST:event_btnCloseActionPerformed
 
     /**
@@ -213,6 +208,21 @@ public class ListStadiums extends javax.swing.JPanel implements ListSelectionLis
             btnDelete.setEnabled(true);
         }
     }
+
+    /**
+     * Trae el panel tabulado al que pertenece este panel
+     *
+     * @return Panel tabulado al que pertenece este panel
+     */
+    private JTabbedPane getTabbedPane() {
+        Container current = this;
+        Class c = current.getClass();
+        while (!"javax.swing.JTabbedPane".equals(c.getName())) {
+            current = current.getParent();
+            c = current.getClass();
+        }
+        return ((JTabbedPane) current);
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
@@ -224,6 +234,6 @@ public class ListStadiums extends javax.swing.JPanel implements ListSelectionLis
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblStadiums;
     // End of variables declaration//GEN-END:variables
-    private StadiumMgr stadiumMgr;
+    private final StadiumMgr stadiumMgr;
     //</editor-fold>
 }

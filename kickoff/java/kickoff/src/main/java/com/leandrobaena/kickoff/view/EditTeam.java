@@ -139,16 +139,16 @@ public class EditTeam extends javax.swing.JDialog {
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream("settings_db.properties"));
-            TeamMgr mgrTeam = new TeamMgr(properties);
+            TeamMgr teamMgr = new TeamMgr(properties);
             if (this.team.getIdTeam() == 0) {
-                mgrTeam.insert(this.team);
+                teamMgr.insert(this.team);
                 JOptionPane.showMessageDialog(null, "Equipo insertado con éxito");
             } else {
-                mgrTeam.update(this.team);
+                teamMgr.update(this.team);
                 JOptionPane.showMessageDialog(null, "Equipo actualizado con éxito");
             }
             ListTeamTableModel model = ListTeamTableModel.getInstance();
-            model.setTeams(mgrTeam.list());
+            model.setTeams(teamMgr.list());
             this.dispose();
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);

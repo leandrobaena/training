@@ -1,6 +1,7 @@
 package com.leandrobaena.kickoff.database;
 
 import com.leandrobaena.kickoff.entities.Parameter;
+import com.leandrobaena.kickoff.entities.Tournament;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -33,15 +34,30 @@ public class ParameterDB {
     /**
      * Trae el listado de parámetros desde la base de datos
      *
+     * @param tournament Torneo por el cual se quiere filtrar o null si se
+     * quiere traer los parámetros generales
      * @return Listado de parámetros desde la base de datos
      * @throws SQLException Si hubo un error en la consulta
      */
-    public ArrayList<Parameter> list() throws SQLException {
-        ArrayList<HashMap<String, String>> table = connection.select("SELECT idparameter, name, value FROM parameter");
+    public ArrayList<Parameter> list(Tournament tournament) throws SQLException {
+        String sql = "SELECT idparameter, name, value, idtournament, tournament FROM vw_parameter";
+        if(tournament != null){
+            sql += " WHERE idtournament = " + tournament.getIdTournament();
+        }
+        ArrayList<HashMap<String, String>> table = connection.select(sql);
         ArrayList<Parameter> list = new ArrayList<>();
-        table.stream().map(row -> new Parameter(Integer.parseInt(row.get("idparameter")), row.get("name"), row.get("value"))).forEachOrdered(p -> {
-            list.add(p);
-        });
+        table.stream().map(
+                row -> new Parameter(
+                        Integer.parseInt(row.get("idparameter")),
+                        row.get("name"),
+                        row.get("value"),
+                        (row.get("idtournament") == null ? null : new Tournament(
+                        Integer.parseInt(row.get("idtournament")),
+                        row.get("tournament")))
+                )).forEachOrdered(
+                        p -> {
+                            list.add(p);
+                        });
         return list;
     }
 
@@ -53,9 +69,11 @@ public class ParameterDB {
      */
     public void insert(Parameter parameter) throws SQLException {
         parameter.setIdParameter(connection.insert(
-                "INSERT INTO parameter (name, value) "
+                "INSERT INTO parameter (name, value, idtournament) "
                 + "VALUES "
-                + "('" + parameter.getName() + "', '" + parameter.getValue() + "')"));
+                + "('" + parameter.getName() + "', "
+                + "'" + parameter.getValue() + "', "
+                + (parameter.getTournament() == null ? "NULL" : parameter.getTournament().getIdTournament()) + ")"));
     }
 
     /**
@@ -66,13 +84,18 @@ public class ParameterDB {
      */
     public void read(Parameter parameter) throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select(
-                "SELECT name, value FROM parameter "
+                "SELECT name, value, idtournament, tournament FROM vw_parameter "
                 + "WHERE idparameter = " + parameter.getIdParameter());
         table.stream().map(row -> {
-            parameter.setName(row.get("name"));
             return row;
         }).forEachOrdered(row -> {
+            parameter.setName(row.get("name"));
             parameter.setValue(row.get("value"));
+            if (row.get("value") == null) {
+                parameter.setTournament(null);
+            } else {
+                parameter.setTournament(new Tournament(Integer.parseInt(row.get("idTournament")), row.get("tournament")));
+            }
         });
     }
 
@@ -86,8 +109,9 @@ public class ParameterDB {
         connection.update(
                 "UPDATE parameter SET "
                 + "name = '" + parameter.getName() + "', "
-                + "value = '" + parameter.getValue() + "' "
-                + "WHERE idparameter = " + parameter.getIdParameter());
+                + "value = '" + parameter.getValue() + "', "
+                + "idtournament = " + (parameter.getTournament() == null ? "NULL" : parameter.getTournament().getIdTournament())
+                + " WHERE idparameter = " + parameter.getIdParameter());
     }
 
     /**

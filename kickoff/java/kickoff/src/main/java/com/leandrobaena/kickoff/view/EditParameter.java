@@ -1,8 +1,9 @@
 package com.leandrobaena.kickoff.view;
 
+import com.leandrobaena.kickoff.entities.Parameter;
 import com.leandrobaena.kickoff.entities.Tournament;
-import com.leandrobaena.kickoff.logic.TournamentMgr;
-import com.leandrobaena.kickoff.view.tablemodel.ListTournamentTableModel;
+import com.leandrobaena.kickoff.logic.ParameterMgr;
+import com.leandrobaena.kickoff.view.tablemodel.ListParameterTableModel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,26 +13,30 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
- * Formulario de edición de un torneo
+ * Formulario de edición de un parámetro
  *
  * @author Leandro Baena Torres
  */
-public class EditTournament extends javax.swing.JDialog {
+public class EditParameter extends javax.swing.JDialog {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Crea un nuevo formulario de edición de un equipo
+     * Crea un nuevo formulario de edición de un parámetro
      *
-     * @param tournament Equipo que va a editar o insertar
+     * @param parameter Parámetro que va a editar o insertar
+     * @param tournament Torneo al que pertenece el parámetro o null si es
+     * general
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditTournament(Tournament tournament, JFrame owner) {
+    public EditParameter(Parameter parameter, Tournament tournament, JFrame owner) {
         super(owner, true);
         initComponents();
-        this.tournament = tournament;
-        this.txtIdentification.setText("" + this.tournament.getIdTournament());
-        this.txtName.setText("" + this.tournament.getName());
+        this.parameter = parameter;
+        this.parameter.setTournament(tournament);
+        this.txtIdentification.setText("" + this.parameter.getIdParameter());
+        this.txtName.setText("" + this.parameter.getName());
+        this.txtValue.setText("" + this.parameter.getValue());
     }
     //</editor-fold>
 
@@ -51,9 +56,11 @@ public class EditTournament extends javax.swing.JDialog {
         txtName = new javax.swing.JTextField();
         btnOk = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
+        lblValue = new javax.swing.JLabel();
+        txtValue = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Editar torneo");
+        setTitle("Editar parámetro");
         setResizable(false);
 
         lblIdentification.setText("Identificador:");
@@ -76,6 +83,8 @@ public class EditTournament extends javax.swing.JDialog {
             }
         });
 
+        lblValue.setText("Valor:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -83,20 +92,27 @@ public class EditTournament extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblIdentification)
-                            .addComponent(lblName))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblIdentification)
+                                    .addComponent(lblName))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                                    .addComponent(txtIdentification)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(71, 71, 71)
+                                .addComponent(btnOk)
+                                .addGap(55, 55, 55)
+                                .addComponent(btnCancel)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblValue)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                            .addComponent(txtIdentification)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(btnOk)
-                        .addGap(55, 55, 55)
-                        .addComponent(btnCancel)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(txtValue)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -105,11 +121,15 @@ public class EditTournament extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblIdentification)
                     .addComponent(txtIdentification, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblName)
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblValue))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancel))
@@ -130,25 +150,26 @@ public class EditTournament extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
-     * Inserta o actualiza un torneo
+     * Inserta o actualiza un parámetro
      *
-     * @param evt Evento de clic sobre el botón Aceptar
+     * @param evt Evento de clic sobre el botón
      */
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        this.tournament.setName(this.txtName.getText());
+        this.parameter.setName(this.txtName.getText());
+        this.parameter.setValue(this.txtValue.getText());
         Properties properties = new Properties();
         try {
             properties.load(new FileInputStream("settings_db.properties"));
-            TournamentMgr tournamentMgr = new TournamentMgr(properties);
-            if (this.tournament.getIdTournament()== 0) {
-                tournamentMgr.insert(this.tournament);
-                JOptionPane.showMessageDialog(null, "Torneo insertado con éxito");
+            ParameterMgr parameterMgr = new ParameterMgr(properties);
+            if (this.parameter.getIdParameter() == 0) {
+                parameterMgr.insert(this.parameter);
+                JOptionPane.showMessageDialog(null, "Parámetro insertado con éxito");
             } else {
-                tournamentMgr.update(this.tournament);
-                JOptionPane.showMessageDialog(null, "Torneo actualizado con éxito");
+                parameterMgr.update(this.parameter);
+                JOptionPane.showMessageDialog(null, "Parámetro actualizado con éxito");
             }
-            ListTournamentTableModel model = ListTournamentTableModel.getInstance();
-            model.setTournaments(tournamentMgr.list());
+            ListParameterTableModel model = ListParameterTableModel.getInstance();
+            model.setTeams(parameterMgr.list(this.parameter.getTournament()));
             this.dispose();
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -166,9 +187,11 @@ public class EditTournament extends javax.swing.JDialog {
     private javax.swing.JButton btnOk;
     private javax.swing.JLabel lblIdentification;
     private javax.swing.JLabel lblName;
+    private javax.swing.JLabel lblValue;
     private javax.swing.JTextField txtIdentification;
     private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtValue;
     // End of variables declaration//GEN-END:variables
-    private final Tournament tournament;
+    private final Parameter parameter;
     //</editor-fold>
 }
