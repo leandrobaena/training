@@ -31,7 +31,7 @@ public class EditStadium extends javax.swing.JDialog {
         initComponents();
         this.stadium = stadium;
         this.txtIdentification.setText("" + this.stadium.getIdStadium());
-        this.txtName.setText("" + this.stadium.getName());
+        this.txtName.setText(this.stadium.getName());
     }
     //</editor-fold>
 

@@ -1,40 +1,44 @@
 package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Group;
-import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.entities.Team;
 import com.leandrobaena.kickoff.logic.GroupMgr;
-import com.leandrobaena.kickoff.view.tablemodel.ListGroupTableModel;
+import com.leandrobaena.kickoff.logic.TeamMgr;
+import com.leandrobaena.kickoff.view.comboboxmodel.TeamsModel;
+import com.leandrobaena.kickoff.view.tablemodel.ListGroupTeamTableModel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
- * Formulario de edición de un grupo
+ * Formulario de edición de un equipo que pertenece a un grupo de un torneo
  *
  * @author Leandro Baena Torres
  */
-public class EditGroup extends javax.swing.JDialog {
+public class EditGroupTeam extends javax.swing.JDialog {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Crea un nuevo formulario de edición de un grupo
+     * Crea un nuevo formulario de adición de un equipo a un grupo
      *
-     * @param group Grupo que va a editar o insertar
-     * @param tournament Torneo al que pertenece el grupo o null si es general
+     * @param group Grupo al que pertenecerá el equipo
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditGroup(Group group, Tournament tournament, JFrame owner) {
+    public EditGroupTeam(Group group, JFrame owner) throws FileNotFoundException, IOException, SQLException {
         super(owner, true);
         initComponents();
         this.group = group;
-        this.group.setTournament(tournament);
-        this.txtIdentification.setText("" + this.group.getIdGroup());
-        this.txtName.setText(this.group.getName());
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        TeamMgr teamMgr = new TeamMgr(properties);
+        ArrayList<Team> teams = teamMgr.list();
+        ((TeamsModel)cmbTeam.getModel()).setTeams(teams);
     }
     //</editor-fold>
 
@@ -48,22 +52,14 @@ public class EditGroup extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblIdentification = new javax.swing.JLabel();
-        lblName = new javax.swing.JLabel();
-        txtIdentification = new javax.swing.JTextField();
-        txtName = new javax.swing.JTextField();
         btnOk = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
+        lblTeam = new javax.swing.JLabel();
+        cmbTeam = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Editar parámetro");
         setResizable(false);
-
-        lblIdentification.setText("Identificador:");
-
-        lblName.setText("Nombre:");
-
-        txtIdentification.setEditable(false);
 
         btnOk.setText("Aceptar");
         btnOk.addActionListener(new java.awt.event.ActionListener() {
@@ -79,6 +75,10 @@ public class EditGroup extends javax.swing.JDialog {
             }
         });
 
+        lblTeam.setText("Equipo:");
+
+        cmbTeam.setModel(TeamsModel.getInstance());
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -87,15 +87,11 @@ public class EditGroup extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblIdentification)
-                            .addComponent(lblName))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                            .addComponent(txtIdentification)))
+                        .addComponent(lblTeam)
+                        .addGap(63, 63, 63)
+                        .addComponent(cmbTeam, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(73, 73, 73)
+                        .addGap(66, 66, 66)
                         .addComponent(btnOk)
                         .addGap(55, 55, 55)
                         .addComponent(btnCancel)))
@@ -106,12 +102,8 @@ public class EditGroup extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblIdentification)
-                    .addComponent(txtIdentification, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblName)
-                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmbTeam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTeam))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
@@ -133,25 +125,20 @@ public class EditGroup extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
-     * Inserta o actualiza un grupo
+     * Inserta o actualiza un jugador
      *
      * @param evt Evento de clic sobre el botón
      */
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        this.group.setName(this.txtName.getText());
-        Properties properties = new Properties();
         try {
+            Team team = (Team) cmbTeam.getSelectedItem();
+            Properties properties = new Properties();
             properties.load(new FileInputStream("settings_db.properties"));
             GroupMgr groupMgr = new GroupMgr(properties);
-            if (this.group.getIdGroup() == 0) {
-                groupMgr.insert(this.group);
-                JOptionPane.showMessageDialog(null, "Grupo insertado con éxito");
-            } else {
-                groupMgr.update(this.group);
-                JOptionPane.showMessageDialog(null, "Grupo actualizado con éxito");
-            }
-            ListGroupTableModel model = ListGroupTableModel.getInstance();
-            model.setGroups(groupMgr.list(this.group.getTournament()));
+            groupMgr.insertTeam(team, this.group);
+            JOptionPane.showMessageDialog(null, "Equipo asociado con éxito");
+            ListGroupTeamTableModel model = ListGroupTeamTableModel.getInstance();
+            model.setTeams(groupMgr.listTeams(this.group));
             this.dispose();
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -167,10 +154,8 @@ public class EditGroup extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnOk;
-    private javax.swing.JLabel lblIdentification;
-    private javax.swing.JLabel lblName;
-    private javax.swing.JTextField txtIdentification;
-    private javax.swing.JTextField txtName;
+    private javax.swing.JComboBox<Team> cmbTeam;
+    private javax.swing.JLabel lblTeam;
     // End of variables declaration//GEN-END:variables
     private final Group group;
     //</editor-fold>

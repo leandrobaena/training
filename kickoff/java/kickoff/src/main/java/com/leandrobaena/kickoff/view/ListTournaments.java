@@ -198,7 +198,7 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
     /**
      * Muestra el listado de parámetros específicos de este torneo
      *
-     * @param evt
+     * @param evt Evento al hacer clic en el botón Parámetros
      */
     private void btnParametersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnParametersActionPerformed
         Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTournament(tblTournaments.getSelectedRow());
@@ -223,6 +223,11 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
         }
     }//GEN-LAST:event_btnParametersActionPerformed
 
+    /**
+     * Muestra el listado de grupos específicos de este torneo
+     *
+     * @param evt Evento al hacer clic en el botón Grupos
+     */
     private void btnGroupsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGroupsActionPerformed
         Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTournament(tblTournaments.getSelectedRow());
         if (selected != null) {

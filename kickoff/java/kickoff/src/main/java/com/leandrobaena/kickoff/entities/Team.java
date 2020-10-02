@@ -64,6 +64,16 @@ public class Team {
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * Muestra el nombre del equipo cuando el objeto se trata de mostrar como
+     * una cadena de texto
+     *
+     * @return Nombre del equipo
+     */
+    public String toString() {
+        return name;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">

@@ -31,7 +31,7 @@ public class EditTournament extends javax.swing.JDialog {
         initComponents();
         this.tournament = tournament;
         this.txtIdentification.setText("" + this.tournament.getIdTournament());
-        this.txtName.setText("" + this.tournament.getName());
+        this.txtName.setText(this.tournament.getName());
     }
     //</editor-fold>
 

@@ -1,6 +1,7 @@
 package com.leandrobaena.kickoff.database;
 
 import com.leandrobaena.kickoff.entities.Group;
+import com.leandrobaena.kickoff.entities.Team;
 import com.leandrobaena.kickoff.entities.Tournament;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,8 +42,8 @@ public class GroupDB {
     public ArrayList<Group> list(Tournament tournament) throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select(
                 "SELECT idgroup, name, idtournament, tournament FROM vw_group WHERE idtournament = " + tournament.getIdTournament());
-        ArrayList<com.leandrobaena.kickoff.entities.Group> list = new ArrayList<>();
-        table.stream().map(row -> new com.leandrobaena.kickoff.entities.Group(
+        ArrayList<Group> list = new ArrayList<>();
+        table.stream().map(row -> new Group(
                 Integer.parseInt(row.get("idgroup")),
                 row.get("name"),
                 new Tournament(
@@ -106,6 +107,56 @@ public class GroupDB {
      */
     public void delete(Group group) throws SQLException {
         connection.delete("DELETE FROM `group` WHERE idgroup = " + group.getIdGroup());
+    }
+
+    /**
+     * Trae el listado de equipos perteneceinetes a un grupo desde la base de
+     * datos
+     *
+     * @param group Grupo por el que se filtran los equipos
+     * @return Listado de equipos que pertenecen a un grupo desde la base de
+     * datos
+     * @throws SQLException Si hubo un error en la consulta
+     */
+    public ArrayList<Team> listTeams(Group group) throws SQLException {
+        ArrayList<HashMap<String, String>> table = connection.select(
+                "SELECT t.idteam, t.name "
+                + "FROM team t "
+                + "INNER JOIN group_team gt ON t.idteam = gt.idteam "
+                + "WHERE gt.idgroup = " + group.getIdGroup());
+        ArrayList<Team> list = new ArrayList<>();
+        table.stream().map(row -> new Team(
+                Integer.parseInt(row.get("idteam")),
+                row.get("name"))).forEachOrdered(g -> {
+            list.add(g);
+        });
+        return list;
+    }
+
+    /**
+     * Inserta un nuevo equipo en un grupo en la base de datos
+     *
+     * @param team Equipo a insertar en la base de datos
+     * @param group Grupo al que se quiere insertar el equipo en la base de
+     * datos
+     * @throws SQLException Si hubo un error en la consulta
+     */
+    public void insertTeam(Team team, Group group) throws SQLException {
+        connection.insert(
+                "INSERT INTO group_team (idteam, idgroup) "
+                + "VALUES "
+                + "(" + team.getIdTeam() + ", " + group.getIdGroup() + ")");
+    }
+
+    /**
+     * Elimina un equipo de un grupo en la base de datos
+     *
+     * @param team Equipo a eliminar en la base de datos
+     * @param group Grupo donde se elimina el equipo en la base de datos
+     * @throws SQLException Si hubo un error en la consulta
+     */
+    public void deleteTeam(Team team, Group group) throws SQLException {
+        connection.delete("DELETE FROM group_team WHERE idgroup = " + group.getIdGroup() + " AND idteam = " + team.getIdTeam());
     }
     //</editor-fold>
 

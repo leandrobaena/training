@@ -16,8 +16,8 @@ public class Fixture {
     public Fixture() {
         idFixture = 0;
         name = "";
-        home = new Position();
-        away = new Position();
+        home = new Team();
+        away = new Team();
         date = new Date();
         stadium = new Stadium();
     }
@@ -30,15 +30,17 @@ public class Fixture {
      * @param name Nombre de la fecha del calendario
      * @param home Equipo que juega de local
      * @param away Equipo que juega de visitante
+     * @param group Grupo al que pertenecen los equipos que juegan
      * @param date Fecha del juego
      * @param stadium Estadio donde se juega
      */
-    public Fixture(int idFixture, String name, Position home,
-            Position away, Date date, Stadium stadium) {
+    public Fixture(int idFixture, String name, Team home,
+            Team away, Group group, Date date, Stadium stadium) {
         this.idFixture = idFixture;
         this.name = name;
         this.home = home;
         this.away = away;
+        this.group = group;
         this.date = date;
         this.stadium = stadium;
     }
@@ -86,7 +88,7 @@ public class Fixture {
      *
      * @return Equipo que juega de local
      */
-    public Position getHome() {
+    public Team getHome() {
         return home;
     }
 
@@ -95,7 +97,7 @@ public class Fixture {
      *
      * @param home Nuevo equipo que juega de local
      */
-    public void setHome(Position home) {
+    public void setHome(Team home) {
         this.home = home;
     }
 
@@ -104,7 +106,7 @@ public class Fixture {
      *
      * @return Equipo que juega de visitante
      */
-    public Position getAway() {
+    public Team getAway() {
         return away;
     }
 
@@ -113,8 +115,26 @@ public class Fixture {
      *
      * @param away Nuevo equipo que juega de visitante
      */
-    public void setAway(Position away) {
+    public void setAway(Team away) {
         this.away = away;
+    }
+
+    /**
+     * Trae el grupo al que pertenecen los equipos que juegan
+     *
+     * @return Grupo al que pertenecen los equipos que juegan
+     */
+    public Group getGroup() {
+        return group;
+    }
+
+    /**
+     * Cambia el grupo al que pertenecen los equipos que juegan
+     *
+     * @param group Nuevo grupo al que pertenecen los equipos que juegan
+     */
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     /**
@@ -168,12 +188,17 @@ public class Fixture {
     /**
      * Equipo dentro del grupo y del torneo que juega de local
      */
-    private Position home;
+    private Team home;
 
     /**
      * Equipo dentro del grupo y del torneo que juega de visitante
      */
-    private Position away;
+    private Team away;
+
+    /**
+     * Grupo en el torneo al que pertenecen los equipos que se enfrentan
+     */
+    private Group group;
 
     /**
      * Fecha del juego

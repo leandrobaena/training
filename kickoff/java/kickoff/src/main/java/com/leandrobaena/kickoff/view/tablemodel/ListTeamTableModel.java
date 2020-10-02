@@ -1,7 +1,15 @@
 package com.leandrobaena.kickoff.view.tablemodel;
 
 import com.leandrobaena.kickoff.entities.Team;
+import com.leandrobaena.kickoff.logic.TeamMgr;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -14,9 +22,16 @@ public class ListTeamTableModel extends DefaultTableModel {
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Crea un modelo de tabla para el listado de equipos
+     *
+     * @throws IOException Si no puede leer el archivo de propiedades
+     * @throws FileNotFoundException Si no encuentra el archivo de propiedades
+     * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    private ListTeamTableModel() {
-        this.teams = new ArrayList<>();
+    private ListTeamTableModel() throws FileNotFoundException, IOException, SQLException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        teamMgr = new TeamMgr(properties);
+        update();
     }
     //</editor-fold>
 
@@ -28,19 +43,13 @@ public class ListTeamTableModel extends DefaultTableModel {
      */
     public static ListTeamTableModel getInstance() {
         if (instance == null) {
-            instance = new ListTeamTableModel();
+            try {
+                instance = new ListTeamTableModel();
+            } catch (IOException | SQLException ex) {
+                return null;
+            }
         }
         return instance;
-    }
-
-    /**
-     * Actualiza el listado de equipos
-     *
-     * @param teams Nuevo listado de equipos
-     */
-    public void setTeams(ArrayList<Team> teams) {
-        this.teams = teams;
-        this.fireTableDataChanged();
     }
 
     /**
@@ -109,6 +118,49 @@ public class ListTeamTableModel extends DefaultTableModel {
     public Team getSelectedTeam(int row) {
         return teams.get(row);
     }
+
+    /**
+     * Inserta un equipo
+     *
+     * @param team Equipo a insertar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void insertTeam(Team team) throws SQLException {
+        teamMgr.insert(team);
+        update();
+    }
+
+    /**
+     * Actualiza un equipo
+     *
+     * @param team Equipo a actualizar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void updateTeam(Team team) throws SQLException {
+        teamMgr.update(team);
+        update();
+    }
+
+    /**
+     * Elimina un equipo en una ubicación determinada
+     *
+     * @param index Ubicación del equipo a eliminar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void deleteTeam(int index) throws SQLException {
+        teamMgr.delete(teams.get(index));
+        update();
+    }
+
+    /**
+     * Actualiza el listado de equipos
+     *
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    private void update() throws SQLException {
+        this.teams = teamMgr.list();
+        this.fireTableDataChanged();
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
@@ -121,5 +173,10 @@ public class ListTeamTableModel extends DefaultTableModel {
      * Única instancia del modelo de la tabla de equipos
      */
     private static ListTeamTableModel instance = null;
+
+    /**
+     * Administrador de los equipos
+     */
+    private final TeamMgr teamMgr;
     //</editor-fold>
 }

@@ -2,6 +2,7 @@ package com.leandrobaena.kickoff.logic;
 
 import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.database.GroupDB;
+import com.leandrobaena.kickoff.entities.Team;
 import com.leandrobaena.kickoff.entities.Tournament;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -75,6 +76,40 @@ public class GroupMgr {
      */
     public void delete(Group group) throws SQLException {
         groupDB.delete(group);
+    }
+
+    /**
+     * Trae el listado de equipos de un grupo desde la base de datos
+     *
+     * @param group Grupo por el que se quiere filtrar los equipos
+     * @return Listado de equipos
+     * @throws SQLException Si hubo un error en la consulta
+     */
+    public ArrayList<Team> listTeams(Group group)
+            throws SQLException {
+        return groupDB.listTeams(group);
+    }
+
+    /**
+     * Inserta un equipo en un grupo en la base de datos
+     *
+     * @param team Nuevo equipo a insertar
+     * @param group Grupo al que se le inserta el equipo
+     * @throws SQLException Si hubo un error en la consulta
+     */
+    public void insertTeam(Team team, Group group) throws SQLException {
+        groupDB.insertTeam(team, group);
+    }
+
+    /**
+     * Elimina un equipo de un grupo en la base de datos
+     *
+     * @param team Equipo a eliminar
+     * @param group Grupo al que se le desea eliminar el equipo
+     * @throws SQLException Si hubo un error en la consulta
+     */
+    public void deleteTeam(Team team, Group group) throws SQLException {
+        groupDB.deleteTeam(team, group);
     }
     //</editor-fold>
 

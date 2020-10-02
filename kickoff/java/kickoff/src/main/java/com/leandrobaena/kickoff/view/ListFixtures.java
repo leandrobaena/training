@@ -1,9 +1,9 @@
 package com.leandrobaena.kickoff.view;
 
+import com.leandrobaena.kickoff.entities.Fixture;
 import com.leandrobaena.kickoff.entities.Group;
-import com.leandrobaena.kickoff.entities.Tournament;
-import com.leandrobaena.kickoff.logic.GroupMgr;
-import com.leandrobaena.kickoff.view.tablemodel.ListGroupTableModel;
+import com.leandrobaena.kickoff.logic.FixtureMgr;
+import com.leandrobaena.kickoff.view.tablemodel.ListFixtureTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
 import java.io.FileInputStream;
@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -19,29 +21,30 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * Listado de grupos de un torneo
+ * Listado de fechas de juegos entre equipos de un grupo de un toreo
  *
  * @author Leandro Baena Torres
  */
-public class ListGroups extends javax.swing.JPanel implements ListSelectionListener {
+public class ListFixtures extends javax.swing.JPanel implements ListSelectionListener {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Inicializa los componentes del listado de grupos
+     * Inicializa los componentes del listado de fechas
      *
-     * @param tournament Torneo al que pertenecen los grupos
+     * @param group Grupo al que pertenecen las fechas
      * @throws java.io.FileNotFoundException
      * @throws java.io.IOException
      * @throws java.sql.SQLException
+     * @throws java.text.ParseException
      */
-    public ListGroups(Tournament tournament) throws FileNotFoundException, IOException, SQLException {
+    public ListFixtures(Group group) throws FileNotFoundException, IOException, SQLException, ParseException {
         initComponents();
-        this.tournament = tournament;
+        this.group = group;
         Properties properties = new Properties();
         properties.load(new FileInputStream("settings_db.properties"));
-        groupMgr = new GroupMgr(properties);
-        ((ListGroupTableModel) tblGroups.getModel()).setGroups(groupMgr.list(this.tournament));
-        tblGroups.getSelectionModel().addListSelectionListener(this);
+        fixtureMgr = new FixtureMgr(properties);
+        ((ListFixtureTableModel) tblFixtures.getModel()).setFixtures(fixtureMgr.list(this.group));
+        tblFixtures.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
 
@@ -56,17 +59,15 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblGroups = new javax.swing.JTable();
+        tblFixtures = new javax.swing.JTable();
         btnInsert = new javax.swing.JButton();
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
-        btnTeams = new javax.swing.JButton();
-        btnFixtures = new javax.swing.JButton();
 
-        tblGroups.setModel(ListGroupTableModel.getInstance());
-        tblGroups.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblGroups);
+        tblFixtures.setModel(ListFixtureTableModel.getInstance());
+        tblFixtures.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblFixtures);
 
         btnInsert.setText("Insertar");
         btnInsert.addActionListener(new java.awt.event.ActionListener() {
@@ -99,22 +100,6 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
             }
         });
 
-        btnTeams.setText("Equipos");
-        btnTeams.setEnabled(false);
-        btnTeams.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTeamsActionPerformed(evt);
-            }
-        });
-
-        btnFixtures.setText("Fechas");
-        btnFixtures.setEnabled(false);
-        btnFixtures.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFixturesActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -126,10 +111,6 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
                 .addComponent(btnUpdate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDelete)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnTeams)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnFixtures)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnClose))
         );
@@ -140,58 +121,58 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
                     .addComponent(btnInsert)
                     .addComponent(btnUpdate)
                     .addComponent(btnDelete)
-                    .addComponent(btnClose)
-                    .addComponent(btnTeams)
-                    .addComponent(btnFixtures))
+                    .addComponent(btnClose))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Muestra el formulario de inserción de un grupo
+     * Muestra el formulario de inserción de una fecha
      *
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditGroup editGroup = new EditGroup(new Group(), this.tournament, getJFrame());
-        editGroup.setVisible(true);
+        EditFixture editFixture = new EditFixture(new Fixture(), this.group, getJFrame());
+        editFixture.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
     /**
-     * Muestra el formulario de edición de un grupo
+     * Muestra el formulario de edición de una fecha
      *
      * @param evt Evento al hacer clic en el botón Editar
      */
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        Group selected = ((ListGroupTableModel) tblGroups.getModel()).getSelectedGroup(tblGroups.getSelectedRow());
+        Fixture selected = ((ListFixtureTableModel) tblFixtures.getModel()).getSelectedFixture(tblFixtures.getSelectedRow());
         if (selected != null) {
-            EditGroup editGroup = new EditGroup(selected, this.tournament, getJFrame());
-            editGroup.setVisible(true);
+            EditFixture editFixture = new EditFixture(selected, this.group, getJFrame());
+            editFixture.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     /**
-     * Elimina un grupo
+     * Elimina una fecha
      *
      * @param evt Evento al hacer clic en el botón Eliminar
      */
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
-            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el grupo?", "Borrar grupo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Group selected = ((ListGroupTableModel) tblGroups.getModel()).getSelectedGroup(tblGroups.getSelectedRow());
-                groupMgr.delete(selected);
-                ListGroupTableModel model = ListGroupTableModel.getInstance();
-                model.setGroups(groupMgr.list(this.tournament));
-                JOptionPane.showMessageDialog(null, "Grupo eliminado con éxito");
+            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar la fecha?", "Borrar fecha", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                Fixture selected = ((ListFixtureTableModel) tblFixtures.getModel()).getSelectedFixture(tblFixtures.getSelectedRow());
+                fixtureMgr.delete(selected);
+                ListFixtureTableModel model = ListFixtureTableModel.getInstance();
+                model.setFixtures(fixtureMgr.list(this.group));
+                JOptionPane.showMessageDialog(null, "Jugador eliminado con éxito");
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el grupo");
+            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el jugador");
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al leer una fecha");
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
-     * Cierra la pestaña de grupos
+     * Cierra la pestaña de jugadores
      *
      * @param evt Evento al hacer clic en el botón Actualizar
      */
@@ -199,56 +180,8 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
         getTabbedPane().remove(this);
     }//GEN-LAST:event_btnCloseActionPerformed
 
-    private void btnTeamsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTeamsActionPerformed
-        Group selected = ((ListGroupTableModel) tblGroups.getModel()).getSelectedGroup(tblGroups.getSelectedRow());
-        if (selected != null) {
-            int index = getTabbedPane().indexOfTab("Listado de equipos del grupo " + selected.getName());
-            if (index == -1) {
-                ListGroupTeams listGroupTeams;
-                try {
-                    listGroupTeams = new ListGroupTeams(selected);
-                    getTabbedPane().add("Listado de equipos del grupo " + selected.getName(), listGroupTeams);
-                    getTabbedPane().setSelectedComponent(listGroupTeams);
-                } catch (FileNotFoundException ex) {
-                    JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                getTabbedPane().setSelectedIndex(index);
-            }
-        }
-    }//GEN-LAST:event_btnTeamsActionPerformed
-
-    private void btnFixturesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFixturesActionPerformed
-        Group selected = ((ListGroupTableModel) tblGroups.getModel()).getSelectedGroup(tblGroups.getSelectedRow());
-        if (selected != null) {
-            int index = getTabbedPane().indexOfTab("Listado de fechas del grupo " + selected.getName());
-            if (index == -1) {
-                ListFixtures listFixtures;
-                try {
-                    listFixtures = new ListFixtures(selected);
-                    getTabbedPane().add("Listado de grupos del torneo " + selected.getName(), listFixtures);
-                    getTabbedPane().setSelectedComponent(listFixtures);
-                } catch (FileNotFoundException ex) {
-                    JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (ParseException ex) {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al leer una fecha", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                getTabbedPane().setSelectedIndex(index);
-            }
-        }
-    }//GEN-LAST:event_btnFixturesActionPerformed
-
     /**
-     * Dibuja el componente del listado de grupos
+     * Dibuja el componente del listado de jugadores
      *
      * @param g Área gráfica a pintar
      */
@@ -279,11 +212,9 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
      */
     @Override
     public void valueChanged(ListSelectionEvent evt) {
-        if (tblGroups.getSelectedRow() != -1) {
+        if (tblFixtures.getSelectedRow() != -1) {
             btnUpdate.setEnabled(true);
             btnDelete.setEnabled(true);
-            btnTeams.setEnabled(true);
-            btnFixtures.setEnabled(true);
         }
     }
 
@@ -307,14 +238,12 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnDelete;
-    private javax.swing.JButton btnFixtures;
     private javax.swing.JButton btnInsert;
-    private javax.swing.JButton btnTeams;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblGroups;
+    private javax.swing.JTable tblFixtures;
     // End of variables declaration//GEN-END:variables
-    private final GroupMgr groupMgr;
-    private final Tournament tournament;
+    private final FixtureMgr fixtureMgr;
+    private final Group group;
     //</editor-fold>
 }

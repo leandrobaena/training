@@ -34,18 +34,19 @@ public class PlayerDB {
     /**
      * Trae el listado de jugadores desde la base de datos
      *
+     * @param team Equipo por el que se filtran los jugadores
      * @return Listado de jugadores desde la base de datos
      * @throws SQLException Si hubo un error en la consulta
      */
-    public ArrayList<Player> list() throws SQLException {
+    public ArrayList<Player> list(Team team) throws SQLException {
         ArrayList<HashMap<String, String>> table = connection.select(
-                "SELECT idplayer, name, dorsal, idteam, team FROM vw_player");
+                "SELECT idplayer, name, dorsal, idteam, team FROM vw_player WHERE idteam = " + team.getIdTeam());
         ArrayList<Player> list = new ArrayList<>();
         table.stream().map(row -> new Player(Integer.parseInt(row.get("idplayer")),
                 row.get("name"),
                 row.get("dorsal"),
                 new Team(Integer.parseInt(row.get("idteam")), row.get("team")))).forEachOrdered(t -> {
-                    list.add(t);
+            list.add(t);
         });
         return list;
     }

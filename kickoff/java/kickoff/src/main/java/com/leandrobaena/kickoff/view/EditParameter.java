@@ -35,8 +35,8 @@ public class EditParameter extends javax.swing.JDialog {
         this.parameter = parameter;
         this.parameter.setTournament(tournament);
         this.txtIdentification.setText("" + this.parameter.getIdParameter());
-        this.txtName.setText("" + this.parameter.getName());
-        this.txtValue.setText("" + this.parameter.getValue());
+        this.txtName.setText(this.parameter.getName());
+        this.txtValue.setText(this.parameter.getValue());
     }
     //</editor-fold>
 

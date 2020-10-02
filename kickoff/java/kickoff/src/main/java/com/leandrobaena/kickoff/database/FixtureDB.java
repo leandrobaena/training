@@ -2,7 +2,6 @@ package com.leandrobaena.kickoff.database;
 
 import com.leandrobaena.kickoff.entities.Fixture;
 import com.leandrobaena.kickoff.entities.Group;
-import com.leandrobaena.kickoff.entities.Position;
 import com.leandrobaena.kickoff.entities.Stadium;
 import com.leandrobaena.kickoff.entities.Team;
 import com.leandrobaena.kickoff.entities.Tournament;
@@ -38,62 +37,38 @@ public class FixtureDB {
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
     /**
-     * Trae el listado de fechas desde la base de datos
+     * Trae el listado de fechas de un grupo determinado desde la base de datos
      *
+     * @param group Grupo al que se le traen las fechas
      * @return Listado de fechas desde la base de datos
      * @throws SQLException Si hubo un error en la consulta
      * @throws java.text.ParseException Si hay un error al procesar la fecha
      */
-    public ArrayList<Fixture> list() throws SQLException, ParseException {
+    public ArrayList<Fixture> list(Group group) throws SQLException, ParseException {
         ArrayList<HashMap<String, String>> table = connection.select(
-                "SELECT idfixture, name, idhome, "
-                + "idgroup_home, group_home, idtournament_home, "
-                + "tournament_home, idteam_home, team_home, "
-                + "win_home, draw_home, lost_home, "
-                + "goal_for_home, goal_against_home, "
-                + "idaway, idgroup_away, group_away, "
-                + "idtournament_away, tournament_away, idteam_away, "
-                + "team_away, win_away, draw_away, "
-                + "lost_away, goal_for_away, goal_against_away, "
-                + "date, idstadium, stadium "
+                "SELECT idfixture, idteam_home, home, "
+                + "idteam_away, away, name, "
+                + "idgroup, `group`, idtournament, "
+                + "tournament, date, idstadium, "
+                + "stadium "
                 + "FROM vw_fixture");
         ArrayList<Fixture> list = new ArrayList<>();
         for (HashMap<String, String> row : table) {
             Fixture f = new Fixture(
                     Integer.parseInt(row.get("idfixture")),
                     row.get("name"),
-                    new Position(
-                            Integer.parseInt(row.get("idhome")),
-                            new Group(
-                                    Integer.parseInt(row.get("idgroup_home")),
-                                    row.get("group_home"),
-                                    new Tournament(
-                                            Integer.parseInt(row.get("idtournament_home")),
-                                            row.get("tournament_home"))),
-                            new Team(
-                                    Integer.parseInt(row.get("idteam_home")),
-                                    row.get("team_home")),
-                            Integer.parseInt(row.get("win_home")),
-                            Integer.parseInt(row.get("draw_home")),
-                            Integer.parseInt(row.get("lost_home")),
-                            Integer.parseInt(row.get("goal_for_home")),
-                            Integer.parseInt(row.get("goal_against_home"))),
-                    new Position(
-                            Integer.parseInt(row.get("idaway")),
-                            new Group(
-                                    Integer.parseInt(row.get("idgroup_away")),
-                                    row.get("group_away"),
-                                    new Tournament(
-                                            Integer.parseInt(row.get("idtournament_away")),
-                                            row.get("tournament_away"))),
-                            new Team(
-                                    Integer.parseInt(row.get("idteam_away")),
-                                    row.get("team_away")),
-                            Integer.parseInt(row.get("win_away")),
-                            Integer.parseInt(row.get("draw_away")),
-                            Integer.parseInt(row.get("lost_away")),
-                            Integer.parseInt(row.get("goal_for_away")),
-                            Integer.parseInt(row.get("goal_against_away"))),
+                    new Team(
+                            Integer.parseInt(row.get("idteam_home")),
+                            row.get("home")),
+                    new Team(
+                            Integer.parseInt(row.get("idteam_away")),
+                            row.get("away")),
+                    new Group(
+                            Integer.parseInt(row.get("idgroup")),
+                            row.get("group"),
+                            new Tournament(
+                                    Integer.parseInt(row.get("idtournament")),
+                                    row.get("tournament"))),
                     new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(row.get("date")),
                     new Stadium(
                             Integer.parseInt(row.get("idstadium")),
@@ -114,10 +89,10 @@ public class FixtureDB {
     public void insert(Fixture fixture) throws SQLException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         fixture.setIdFixture(connection.insert(
-                "INSERT INTO fixture (name, home, away, date, idstadium) "
+                "INSERT INTO fixture (name, home, away, idgroup, date, idstadium) "
                 + "VALUES "
-                + "('" + fixture.getName() + "', " + fixture.getHome().getIdPosition() + ", " + fixture.getAway().getIdPosition() + ", "
-                + "'" + sdf.format(fixture.getDate()) + "', " + fixture.getStadium().getIdStadium() + ")"));
+                + "('" + fixture.getName() + "', " + fixture.getHome().getIdTeam() + ", " + fixture.getAway().getIdTeam() + ", "
+                + fixture.getGroup().getIdGroup() + ", '" + sdf.format(fixture.getDate()) + "', " + fixture.getStadium().getIdStadium() + ")"));
     }
 
     /**
@@ -129,52 +104,23 @@ public class FixtureDB {
      */
     public void read(Fixture fixture) throws SQLException, ParseException {
         ArrayList<HashMap<String, String>> table = connection.select(
-                "SELECT idfixture, name, idhome, "
-                + "idgroup_home, group_home, idtournament_home, "
-                + "tournament_home, idteam_home, team_home, "
-                + "win_home, draw_home, lost_home, "
-                + "goal_for_home, goal_against_home, "
-                + "idaway, idgroup_away, group_away, "
-                + "idtournament_away, tournament_away, idteam_away, "
-                + "team_away, win_away, draw_away, "
-                + "lost_away, goal_for_away, goal_against_away, "
-                + "date, idstadium, stadium "
+                "SELECT idfixture, idteam_home, home, "
+                + "idteam_away, away, name, "
+                + "idgroup, `group`, idtournament, "
+                + "tournament, date, idstadium, "
+                + "stadium "
                 + "FROM vw_fixture "
                 + "WHERE idfixture = " + fixture.getIdFixture());
         for (HashMap<String, String> row : table) {
             fixture.setName(row.get("name"));
-            fixture.setHome(new Position(
-                    Integer.parseInt(row.get("idhome")),
-                    new Group(
-                            Integer.parseInt(row.get("idgroup_home")),
-                            row.get("group_home"),
-                            new Tournament(
-                                    Integer.parseInt(row.get("idtournament_home")),
-                                    row.get("tournament_home"))),
-                    new Team(
-                            Integer.parseInt(row.get("idteam_home")),
-                            row.get("team_home")),
-                    Integer.parseInt(row.get("win_home")),
-                    Integer.parseInt(row.get("draw_home")),
-                    Integer.parseInt(row.get("lost_home")),
-                    Integer.parseInt(row.get("goal_for_home")),
-                    Integer.parseInt(row.get("goal_against_home"))));
-            fixture.setAway(new Position(
-                    Integer.parseInt(row.get("idaway")),
-                    new Group(
-                            Integer.parseInt(row.get("idgroup_away")),
-                            row.get("group_away"),
-                            new Tournament(
-                                    Integer.parseInt(row.get("idtournament_away")),
-                                    row.get("tournament_away"))),
-                    new Team(
-                            Integer.parseInt(row.get("idteam_away")),
-                            row.get("team_away")),
-                    Integer.parseInt(row.get("win_away")),
-                    Integer.parseInt(row.get("draw_away")),
-                    Integer.parseInt(row.get("lost_away")),
-                    Integer.parseInt(row.get("goal_for_away")),
-                    Integer.parseInt(row.get("goal_against_away"))));
+            fixture.setHome(new Team(Integer.parseInt(row.get("idteam_home")), row.get("home")));
+            fixture.setAway(new Team(Integer.parseInt(row.get("idteam_away")), row.get("away")));
+            fixture.setGroup(new Group(
+                    Integer.parseInt(row.get("idgroup")),
+                    row.get("group"),
+                    new Tournament(
+                            Integer.parseInt(row.get("idtournament")),
+                            row.get("tournament"))));
             fixture.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(row.get("date")));
             fixture.setStadium(new Stadium(
                     Integer.parseInt(row.get("idstadium")),
@@ -193,8 +139,9 @@ public class FixtureDB {
         connection.update(
                 "UPDATE fixture SET "
                 + "name = '" + fixture.getName() + "', "
-                + "home = " + fixture.getHome().getIdPosition() + ", "
-                + "away = " + fixture.getAway().getIdPosition() + ", "
+                + "home = " + fixture.getHome().getIdTeam() + ", "
+                + "away = " + fixture.getAway().getIdTeam() + ", "
+                + "`group` = " + fixture.getGroup().getIdGroup() + ", "
                 + "date = '" + sdf.format(fixture.getDate()) + "', "
                 + "idstadium = " + fixture.getStadium().getIdStadium() + " "
                 + "WHERE idfixture = " + fixture.getIdFixture());

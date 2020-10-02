@@ -1,12 +1,16 @@
 package com.leandrobaena.kickoff.view;
 
+import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.view.tablemodel.ListTeamTableModel;
+import com.leandrobaena.kickoff.logic.GroupMgr;
+import com.leandrobaena.kickoff.view.tablemodel.ListGroupTeamTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -14,23 +18,29 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * Listado de equipos de un torneo
+ * Listado de equipos de un grupo de un torneo
  *
  * @author Leandro Baena Torres
  */
-public class ListTeams extends javax.swing.JPanel implements ListSelectionListener {
+public class ListGroupTeams extends javax.swing.JPanel implements ListSelectionListener {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
-     * Inicializa los componentes del listado de equipos
+     * Inicializa los componentes del listado de equipos del grupo
      *
+     * @param group Grupo al que pertenecen los equipos
      * @throws java.io.FileNotFoundException
      * @throws java.io.IOException
      * @throws java.sql.SQLException
      */
-    public ListTeams() throws FileNotFoundException, IOException, SQLException {
+    public ListGroupTeams(Group group) throws FileNotFoundException, IOException, SQLException {
         initComponents();
-        tblTeams.getSelectionModel().addListSelectionListener(this);
+        this.group = group;
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        groupMgr = new GroupMgr(properties);
+        ((ListGroupTeamTableModel) tblGroupTeams.getModel()).setTeams(groupMgr.listTeams(this.group));
+        tblGroupTeams.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
 
@@ -45,29 +55,19 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblTeams = new javax.swing.JTable();
+        tblGroupTeams = new javax.swing.JTable();
         btnInsert = new javax.swing.JButton();
-        btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
-        btnPlayers = new javax.swing.JButton();
 
-        tblTeams.setModel(ListTeamTableModel.getInstance());
-        tblTeams.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblTeams);
+        tblGroupTeams.setModel(ListGroupTeamTableModel.getInstance());
+        tblGroupTeams.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblGroupTeams);
 
         btnInsert.setText("Insertar");
         btnInsert.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInsertActionPerformed(evt);
-            }
-        });
-
-        btnUpdate.setText("Editar");
-        btnUpdate.setEnabled(false);
-        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnUpdateActionPerformed(evt);
             }
         });
 
@@ -87,14 +87,6 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
             }
         });
 
-        btnPlayers.setText("Jugadores");
-        btnPlayers.setEnabled(false);
-        btnPlayers.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPlayersActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,11 +95,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
             .addGroup(layout.createSequentialGroup()
                 .addComponent(btnInsert)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnUpdate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDelete)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPlayers)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnClose))
         );
@@ -116,47 +104,41 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnInsert)
-                    .addComponent(btnUpdate)
                     .addComponent(btnDelete)
-                    .addComponent(btnClose)
-                    .addComponent(btnPlayers))
+                    .addComponent(btnClose))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Muestra el formulario de inserción de un equipo
+     * Muestra el formulario de inserción de un grupo
      *
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditTeam editTeam = new EditTeam(new Team(), getJFrame());
-        editTeam.setVisible(true);
+        try {
+            EditGroupTeam editGroupTeam = new EditGroupTeam(group, getJFrame());
+            editGroupTeam.setVisible(true);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnInsertActionPerformed
 
     /**
-     * Muestra el formulario de edición de un equipo
-     *
-     * @param evt Evento al hacer clic en el botón Editar
-     */
-    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
-        if (selected != null) {
-            EditTeam editTeam = new EditTeam(selected, getJFrame());
-            editTeam.setVisible(true);
-        }
-    }//GEN-LAST:event_btnUpdateActionPerformed
-
-    /**
-     * Elimina un equipo
+     * Elimina un equipo de un grupo
      *
      * @param evt Evento al hacer clic en el botón Eliminar
      */
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
-            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el equipo?", "Borrar equipo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                ((ListTeamTableModel) tblTeams.getModel()).deleteTeam(tblTeams.getSelectedRow());
+            if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el equipo del grupo?", "Borrar equipo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                Team selected = ((ListGroupTeamTableModel) tblGroupTeams.getModel()).getSelectedTeam(tblGroupTeams.getSelectedRow());
+                groupMgr.deleteTeam(selected, group);
+                ListGroupTeamTableModel model = ListGroupTeamTableModel.getInstance();
+                model.setTeams(groupMgr.listTeams(group));
                 JOptionPane.showMessageDialog(null, "Equipo eliminado con éxito");
             }
         } catch (SQLException ex) {
@@ -165,7 +147,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     /**
-     * Cierra la pestaña de equipos
+     * Cierra la pestaña de grupos
      *
      * @param evt Evento al hacer clic en el botón Actualizar
      */
@@ -174,35 +156,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     }//GEN-LAST:event_btnCloseActionPerformed
 
     /**
-     * Muestra el listado de jugadores del equipo
-     *
-     * @param evt Evento al hacer clic en el botón Jugadores
-     */
-    private void btnPlayersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayersActionPerformed
-        Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
-        if (selected != null) {
-            int index = getTabbedPane().indexOfTab("Listado de jugadores del equipo " + selected.getName());
-            if (index == -1) {
-                ListPlayers listPlayers;
-                try {
-                    listPlayers = new ListPlayers(selected);
-                    getTabbedPane().add("Listado de jugadores del equipo " + selected.getName(), listPlayers);
-                    getTabbedPane().setSelectedComponent(listPlayers);
-                } catch (FileNotFoundException ex) {
-                    JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                } catch (SQLException ex) {
-                    JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                getTabbedPane().setSelectedIndex(index);
-            }
-        }
-    }//GEN-LAST:event_btnPlayersActionPerformed
-
-    /**
-     * Dibuja el componente del listado de equipos
+     * Dibuja el componente del listado de grupos
      *
      * @param g Área gráfica a pintar
      */
@@ -233,10 +187,8 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
      */
     @Override
     public void valueChanged(ListSelectionEvent evt) {
-        if (tblTeams.getSelectedRow() != -1) {
-            btnUpdate.setEnabled(true);
+        if (tblGroupTeams.getSelectedRow() != -1) {
             btnDelete.setEnabled(true);
-            btnPlayers.setEnabled(true);
         }
     }
 
@@ -261,10 +213,10 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnInsert;
-    private javax.swing.JButton btnPlayers;
-    private javax.swing.JButton btnUpdate;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblTeams;
+    private javax.swing.JTable tblGroupTeams;
     // End of variables declaration//GEN-END:variables
+    private final GroupMgr groupMgr;
+    private final Group group;
     //</editor-fold>
 }
