@@ -1,7 +1,13 @@
 package com.leandrobaena.kickoff.view.tablemodel;
 
 import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.logic.TournamentMgr;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -15,8 +21,11 @@ public class ListTournamentTableModel extends DefaultTableModel {
     /**
      * Crea un modelo de tabla para el listado de torneos
      */
-    private ListTournamentTableModel() {
-        this.tournament = new ArrayList<>();
+    private ListTournamentTableModel() throws FileNotFoundException, IOException, SQLException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        tournamentMgr = new TournamentMgr(properties);
+        update();
     }
     //</editor-fold>
 
@@ -28,19 +37,13 @@ public class ListTournamentTableModel extends DefaultTableModel {
      */
     public static ListTournamentTableModel getInstance() {
         if (instance == null) {
-            instance = new ListTournamentTableModel();
+            try {
+                instance = new ListTournamentTableModel();
+            } catch (IOException | SQLException ex) {
+                return null;
+            }
         }
         return instance;
-    }
-
-    /**
-     * Actualiza el listado de torneos
-     *
-     * @param tournament Nuevo listado de torneos
-     */
-    public void setTournaments(ArrayList<Tournament> tournament) {
-        this.tournament = tournament;
-        this.fireTableDataChanged();
     }
 
     /**
@@ -50,7 +53,7 @@ public class ListTournamentTableModel extends DefaultTableModel {
      */
     @Override
     public int getRowCount() {
-        return tournament != null ? tournament.size() : 0;
+        return tournaments != null ? tournaments.size() : 0;
     }
 
     /**
@@ -92,9 +95,9 @@ public class ListTournamentTableModel extends DefaultTableModel {
     public Object getValueAt(int row, int col) {
         return switch (col) {
             case 0 ->
-                tournament.get(row).getIdTournament();
+                tournaments.get(row).getIdTournament();
             case 1 ->
-                tournament.get(row).getName();
+                tournaments.get(row).getName();
             default ->
                 "";
         };
@@ -107,7 +110,50 @@ public class ListTournamentTableModel extends DefaultTableModel {
      * @return Torneo seleccionado
      */
     public Tournament getSelectedTournament(int row) {
-        return tournament.get(row);
+        return tournaments.get(row);
+    }
+
+    /**
+     * Inserta un torneo
+     *
+     * @param tournament Torneo a insertar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void insertTournament(Tournament tournament) throws SQLException {
+        tournamentMgr.insert(tournament);
+        update();
+    }
+
+    /**
+     * Actualiza un torneo
+     *
+     * @param tournament Torneo a actualizar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void updateTournament(Tournament tournament) throws SQLException {
+        tournamentMgr.update(tournament);
+        update();
+    }
+
+    /**
+     * Elimina un torneo en una ubicación determinada
+     *
+     * @param index Ubicación del torneo a eliminar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void deleteTournament(int index) throws SQLException {
+        tournamentMgr.delete(tournaments.get(index));
+        update();
+    }
+
+    /**
+     * Actualiza el listado de torneos
+     *
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    private void update() throws SQLException {
+        this.tournaments = tournamentMgr.list();
+        this.fireTableDataChanged();
     }
     //</editor-fold>
 
@@ -115,11 +161,16 @@ public class ListTournamentTableModel extends DefaultTableModel {
     /**
      * Listado de torneos
      */
-    private ArrayList<Tournament> tournament;
+    private ArrayList<Tournament> tournaments;
 
     /**
      * Única instancia del modelo de la tabla de equipos
      */
     private static ListTournamentTableModel instance = null;
+
+    /**
+     * Administrador de los torneos
+     */
+    private final TournamentMgr tournamentMgr;
     //</editor-fold>
 }

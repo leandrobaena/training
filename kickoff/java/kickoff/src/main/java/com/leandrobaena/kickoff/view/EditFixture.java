@@ -2,15 +2,14 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Fixture;
 import com.leandrobaena.kickoff.entities.Group;
-import com.leandrobaena.kickoff.logic.FixtureMgr;
+import com.leandrobaena.kickoff.entities.Stadium;
+import com.leandrobaena.kickoff.entities.Team;
+import com.leandrobaena.kickoff.view.comboboxmodel.StadiumsModel;
+import com.leandrobaena.kickoff.view.comboboxmodel.TeamsGroupModel;
 import com.leandrobaena.kickoff.view.tablemodel.ListFixtureTableModel;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -32,13 +31,16 @@ public class EditFixture extends javax.swing.JDialog {
      */
     public EditFixture(Fixture fixture, Group group, JFrame owner) {
         super(owner, true);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        initComponents();
         this.fixture = fixture;
         this.fixture.setGroup(group);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        initComponents();
         this.txtIdentification.setText("" + this.fixture.getIdFixture());
         this.txtName.setText(this.fixture.getName());
         this.txtDate.setText(sdf.format(this.fixture.getDate()));
+        this.cmbHome.getModel().setSelectedItem(this.fixture.getHome());
+        this.cmbAway.getModel().setSelectedItem(this.fixture.getAway());
+        this.cmbStadium.getModel().setSelectedItem(this.fixture.getStadium());
     }
     //</editor-fold>
 
@@ -97,52 +99,49 @@ public class EditFixture extends javax.swing.JDialog {
 
         lblHome.setText("Local:");
 
-        cmbHome.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbHome.setModel(new TeamsGroupModel(this.fixture.getGroup()));
 
         lblAway.setText("Visitante:");
 
-        cmbAway.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbAway.setModel(new TeamsGroupModel(this.fixture.getGroup()));
 
         lblStadium.setText("Estadio:");
 
-        cmbStadium.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbStadium.setModel(new StadiumsModel());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblIdentification)
-                            .addComponent(lblDate)
                             .addComponent(lblName)
-                            .addComponent(lblHome))
+                            .addComponent(lblDate)
+                            .addComponent(lblHome)
+                            .addComponent(lblAway, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblStadium))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cmbHome, 0, 214, Short.MAX_VALUE)
-                            .addComponent(txtDate)
-                            .addComponent(txtName)
-                            .addComponent(txtIdentification))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtIdentification, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDate, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbHome, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbAway, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbStadium, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblStadium)
-                            .addComponent(lblAway))
-                        .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cmbAway, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cmbStadium, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(71, 71, 71)
-                .addComponent(btnOk)
-                .addGap(55, 55, 55)
-                .addComponent(btnCancel)
+                        .addGap(71, 71, 71)
+                        .addComponent(btnOk)
+                        .addGap(55, 55, 55)
+                        .addComponent(btnCancel)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cmbAway, cmbHome, cmbStadium, txtDate, txtIdentification, txtName});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -198,25 +197,20 @@ public class EditFixture extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.fixture.setHome((Team) this.cmbHome.getSelectedItem());
+            this.fixture.setAway((Team) this.cmbAway.getSelectedItem());
             this.fixture.setName(this.txtName.getText());
             this.fixture.setDate(sdf.parse(this.txtDate.getText()));
-            Properties properties = new Properties();
-            properties.load(new FileInputStream("settings_db.properties"));
-            FixtureMgr fixtureMgr = new FixtureMgr(properties);
+            this.fixture.setStadium((Stadium) this.cmbStadium.getSelectedItem());
+            ListFixtureTableModel model = ListFixtureTableModel.getInstance(fixture.getGroup());
             if (this.fixture.getIdFixture() == 0) {
-                fixtureMgr.insert(this.fixture);
+                model.insertFixture(this.fixture);
                 JOptionPane.showMessageDialog(null, "Fecha insertada con éxito");
             } else {
-                fixtureMgr.update(this.fixture);
+                model.updateFixture(this.fixture);
                 JOptionPane.showMessageDialog(null, "Fecha actualizada con éxito");
             }
-            ListFixtureTableModel model = ListFixtureTableModel.getInstance();
-            model.setFixtures(fixtureMgr.list(this.fixture.getGroup()));
             this.dispose();
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (ParseException ex) {

@@ -1,16 +1,12 @@
 package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Group;
-import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.GroupMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListGroupTeamTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -34,12 +30,8 @@ public class ListGroupTeams extends javax.swing.JPanel implements ListSelectionL
      * @throws java.sql.SQLException
      */
     public ListGroupTeams(Group group) throws FileNotFoundException, IOException, SQLException {
-        initComponents();
         this.group = group;
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        groupMgr = new GroupMgr(properties);
-        ((ListGroupTeamTableModel) tblGroupTeams.getModel()).setTeams(groupMgr.listTeams(this.group));
+        initComponents();
         tblGroupTeams.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
@@ -60,7 +52,7 @@ public class ListGroupTeams extends javax.swing.JPanel implements ListSelectionL
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblGroupTeams.setModel(ListGroupTeamTableModel.getInstance());
+        tblGroupTeams.setModel(ListGroupTeamTableModel.getInstance(this.group));
         tblGroupTeams.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblGroupTeams);
 
@@ -135,10 +127,7 @@ public class ListGroupTeams extends javax.swing.JPanel implements ListSelectionL
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
             if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el equipo del grupo?", "Borrar equipo", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Team selected = ((ListGroupTeamTableModel) tblGroupTeams.getModel()).getSelectedTeam(tblGroupTeams.getSelectedRow());
-                groupMgr.deleteTeam(selected, group);
-                ListGroupTeamTableModel model = ListGroupTeamTableModel.getInstance();
-                model.setTeams(groupMgr.listTeams(group));
+                ((ListGroupTeamTableModel) tblGroupTeams.getModel()).deleteTeam(tblGroupTeams.getSelectedRow());
                 JOptionPane.showMessageDialog(null, "Equipo eliminado con éxito");
             }
         } catch (SQLException ex) {
@@ -216,7 +205,6 @@ public class ListGroupTeams extends javax.swing.JPanel implements ListSelectionL
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblGroupTeams;
     // End of variables declaration//GEN-END:variables
-    private final GroupMgr groupMgr;
     private final Group group;
     //</editor-fold>
 }

@@ -2,15 +2,12 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Player;
 import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.PlayerMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListPlayerTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -34,12 +31,8 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
      * @throws java.sql.SQLException
      */
     public ListPlayers(Team team) throws FileNotFoundException, IOException, SQLException {
-        initComponents();
         this.team = team;
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        playerMgr = new PlayerMgr(properties);
-        ((ListPlayerTableModel) tblPlayers.getModel()).setPlayers(playerMgr.list(this.team));
+        initComponents();
         tblPlayers.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
@@ -61,7 +54,7 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblPlayers.setModel(ListPlayerTableModel.getInstance());
+        tblPlayers.setModel(ListPlayerTableModel.getInstance(this.team));
         tblPlayers.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblPlayers);
 
@@ -154,10 +147,7 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
             if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el jugador?", "Borrar jugador", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Player selected = ((ListPlayerTableModel) tblPlayers.getModel()).getSelectedGroup(tblPlayers.getSelectedRow());
-                playerMgr.delete(selected);
-                ListPlayerTableModel model = ListPlayerTableModel.getInstance();
-                model.setPlayers(playerMgr.list(this.team));
+                ((ListPlayerTableModel) tblPlayers.getModel()).deletePlayer(tblPlayers.getSelectedRow());
                 JOptionPane.showMessageDialog(null, "Jugador eliminado con éxito");
             }
         } catch (SQLException ex) {
@@ -237,7 +227,6 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblPlayers;
     // End of variables declaration//GEN-END:variables
-    private final PlayerMgr playerMgr;
     private final Team team;
     //</editor-fold>
 }

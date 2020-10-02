@@ -2,16 +2,11 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.GroupMgr;
-import com.leandrobaena.kickoff.logic.TeamMgr;
 import com.leandrobaena.kickoff.view.comboboxmodel.TeamsModel;
 import com.leandrobaena.kickoff.view.tablemodel.ListGroupTeamTableModel;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -32,13 +27,8 @@ public class EditGroupTeam extends javax.swing.JDialog {
      */
     public EditGroupTeam(Group group, JFrame owner) throws FileNotFoundException, IOException, SQLException {
         super(owner, true);
-        initComponents();
         this.group = group;
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        TeamMgr teamMgr = new TeamMgr(properties);
-        ArrayList<Team> teams = teamMgr.list();
-        ((TeamsModel)cmbTeam.getModel()).setTeams(teams);
+        initComponents();
     }
     //</editor-fold>
 
@@ -77,7 +67,7 @@ public class EditGroupTeam extends javax.swing.JDialog {
 
         lblTeam.setText("Equipo:");
 
-        cmbTeam.setModel(TeamsModel.getInstance());
+        cmbTeam.setModel(new TeamsModel());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -132,18 +122,10 @@ public class EditGroupTeam extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         try {
             Team team = (Team) cmbTeam.getSelectedItem();
-            Properties properties = new Properties();
-            properties.load(new FileInputStream("settings_db.properties"));
-            GroupMgr groupMgr = new GroupMgr(properties);
-            groupMgr.insertTeam(team, this.group);
+            ListGroupTeamTableModel model = ListGroupTeamTableModel.getInstance(group);
+            model.insertTeam(team);
             JOptionPane.showMessageDialog(null, "Equipo asociado con éxito");
-            ListGroupTeamTableModel model = ListGroupTeamTableModel.getInstance();
-            model.setTeams(groupMgr.listTeams(this.group));
             this.dispose();
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         }

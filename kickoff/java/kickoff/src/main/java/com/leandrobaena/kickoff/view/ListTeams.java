@@ -23,12 +23,8 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Inicializa los componentes del listado de equipos
-     *
-     * @throws java.io.FileNotFoundException
-     * @throws java.io.IOException
-     * @throws java.sql.SQLException
      */
-    public ListTeams() throws FileNotFoundException, IOException, SQLException {
+    public ListTeams() {
         initComponents();
         tblTeams.getSelectionModel().addListSelectionListener(this);
     }

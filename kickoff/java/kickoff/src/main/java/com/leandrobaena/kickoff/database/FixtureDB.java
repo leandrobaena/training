@@ -141,7 +141,7 @@ public class FixtureDB {
                 + "name = '" + fixture.getName() + "', "
                 + "home = " + fixture.getHome().getIdTeam() + ", "
                 + "away = " + fixture.getAway().getIdTeam() + ", "
-                + "`group` = " + fixture.getGroup().getIdGroup() + ", "
+                + "idgroup = " + fixture.getGroup().getIdGroup() + ", "
                 + "date = '" + sdf.format(fixture.getDate()) + "', "
                 + "idstadium = " + fixture.getStadium().getIdStadium() + " "
                 + "WHERE idfixture = " + fixture.getIdFixture());

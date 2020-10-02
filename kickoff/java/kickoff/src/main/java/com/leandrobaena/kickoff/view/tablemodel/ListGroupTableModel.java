@@ -1,7 +1,14 @@
 package com.leandrobaena.kickoff.view.tablemodel;
 
 import com.leandrobaena.kickoff.entities.Group;
+import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.logic.GroupMgr;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -14,9 +21,15 @@ public class ListGroupTableModel extends DefaultTableModel {
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Crea un modelo de tabla para el listado de grupos
+     *
+     * @param tournament Torneo al que pertenecen los grupos
      */
-    private ListGroupTableModel() {
-        this.groups = new ArrayList<>();
+    private ListGroupTableModel(Tournament tournament) throws FileNotFoundException, IOException, SQLException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        groupMgr = new GroupMgr(properties);
+        this.tournament = tournament;
+        update();
     }
     //</editor-fold>
 
@@ -24,23 +37,25 @@ public class ListGroupTableModel extends DefaultTableModel {
     /**
      * Trae la única instancia de esta clase
      *
+     * @param tournament Torneo al que pertenecen los grupos
      * @return Única instancia de esta clase
      */
-    public static ListGroupTableModel getInstance() {
+    public static ListGroupTableModel getInstance(Tournament tournament) {
         if (instance == null) {
-            instance = new ListGroupTableModel();
+            try {
+                instance = new ListGroupTableModel(tournament);
+            } catch (IOException | SQLException ex) {
+                return null;
+            }
+        } else {
+            instance.tournament = tournament;
+            try {
+                instance.update();
+            } catch (SQLException ex) {
+                return null;
+            }
         }
         return instance;
-    }
-
-    /**
-     * Actualiza el listado de grupos
-     *
-     * @param groups Nuevo listado de grupos
-     */
-    public void setGroups(ArrayList<Group> groups) {
-        this.groups = groups;
-        this.fireTableDataChanged();
     }
 
     /**
@@ -109,6 +124,49 @@ public class ListGroupTableModel extends DefaultTableModel {
     public Group getSelectedGroup(int row) {
         return groups.get(row);
     }
+
+    /**
+     * Inserta un grupo
+     *
+     * @param group Grupo a insertar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void insertGroup(Group group) throws SQLException {
+        groupMgr.insert(group);
+        update();
+    }
+
+    /**
+     * Actualiza un grupo
+     *
+     * @param group Grupo a actualizar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void updateGroup(Group group) throws SQLException {
+        groupMgr.update(group);
+        update();
+    }
+
+    /**
+     * Elimina un grupo en una ubicación determinada
+     *
+     * @param index Ubicación del grupo a eliminar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void deleteGroup(int index) throws SQLException {
+        groupMgr.delete(groups.get(index));
+        update();
+    }
+
+    /**
+     * Actualiza el listado de grupos
+     *
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    private void update() throws SQLException {
+        this.groups = groupMgr.list(tournament);
+        this.fireTableDataChanged();
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
@@ -121,5 +179,15 @@ public class ListGroupTableModel extends DefaultTableModel {
      * Única instancia del modelo de la tabla de grupos
      */
     private static ListGroupTableModel instance = null;
+
+    /**
+     * Administrador de grupos de un grupo
+     */
+    private final GroupMgr groupMgr;
+
+    /**
+     * Torneo al que pertenecen los grupos
+     */
+    private Tournament tournament;
     //</editor-fold>
 }

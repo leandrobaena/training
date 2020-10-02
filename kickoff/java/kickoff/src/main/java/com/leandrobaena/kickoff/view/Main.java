@@ -1,10 +1,5 @@
 package com.leandrobaena.kickoff.view;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.swing.JOptionPane;
-
 /**
  * Entrada al programa de Kickoff - Sistema de torneos
  *
@@ -126,17 +121,9 @@ public class Main extends javax.swing.JFrame {
         int index = mainPanel.indexOfTab("Listado de equipos");
         if (index == -1) {
             ListTeams listTeams;
-            try {
-                listTeams = new ListTeams();
-                mainPanel.add("Listado de equipos", listTeams);
-                mainPanel.setSelectedComponent(listTeams);
-            } catch (FileNotFoundException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            listTeams = new ListTeams();
+            mainPanel.add("Listado de equipos", listTeams);
+            mainPanel.setSelectedComponent(listTeams);
         } else {
             mainPanel.setSelectedIndex(index);
         }
@@ -150,17 +137,9 @@ public class Main extends javax.swing.JFrame {
         int index = mainPanel.indexOfTab("Listado de torneos");
         if (index == -1) {
             ListTournaments listTournaments;
-            try {
-                listTournaments = new ListTournaments();
-                mainPanel.add("Listado de torneos", listTournaments);
-                mainPanel.setSelectedComponent(listTournaments);
-            } catch (FileNotFoundException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            listTournaments = new ListTournaments();
+            mainPanel.add("Listado de torneos", listTournaments);
+            mainPanel.setSelectedComponent(listTournaments);
         } else {
             mainPanel.setSelectedIndex(index);
         }
@@ -170,17 +149,9 @@ public class Main extends javax.swing.JFrame {
         int index = mainPanel.indexOfTab("Listado de estadios");
         if (index == -1) {
             ListStadiums listStadiums;
-            try {
-                listStadiums = new ListStadiums();
-                mainPanel.add("Listado de estadios", listStadiums);
-                mainPanel.setSelectedComponent(listStadiums);
-            } catch (FileNotFoundException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            listStadiums = new ListStadiums();
+            mainPanel.add("Listado de estadios", listStadiums);
+            mainPanel.setSelectedComponent(listStadiums);
         } else {
             mainPanel.setSelectedIndex(index);
         }
@@ -190,17 +161,9 @@ public class Main extends javax.swing.JFrame {
         int index = mainPanel.indexOfTab("Listado de parámetros");
         if (index == -1) {
             ListParameters listParameters;
-            try {
-                listParameters = new ListParameters(null);
-                mainPanel.add("Listado de parámetros", listParameters);
-                mainPanel.setSelectedComponent(listParameters);
-            } catch (FileNotFoundException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+            listParameters = new ListParameters(null);
+            mainPanel.add("Listado de parámetros", listParameters);
+            mainPanel.setSelectedComponent(listParameters);
         } else {
             mainPanel.setSelectedIndex(index);
         }

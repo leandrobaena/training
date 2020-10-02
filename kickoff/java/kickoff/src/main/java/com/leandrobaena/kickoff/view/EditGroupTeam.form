@@ -87,7 +87,7 @@
     <Component class="javax.swing.JComboBox" name="cmbTeam">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="TeamsModel.getInstance()" type="code"/>
+          <Connection code="new TeamsModel()" type="code"/>
         </Property>
       </Properties>
       <AuxValues>

@@ -1,8 +1,10 @@
 package com.leandrobaena.kickoff.view.comboboxmodel;
 
+import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.entities.Team;
-import com.leandrobaena.kickoff.logic.TeamMgr;
+import com.leandrobaena.kickoff.logic.GroupMgr;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,21 +18,23 @@ import javax.swing.JOptionPane;
  *
  * @author Leandro Baena Torres
  */
-public class TeamsModel extends AbstractListModel implements ComboBoxModel {
+public class TeamsGroupModel extends AbstractListModel implements ComboBoxModel {
 
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Crea un modelo de combobox para el listado de equipos
+     *
+     * @param group Grupo por el que se filtran los equipos que pertenecen a él
      */
-    public TeamsModel() {
+    public TeamsGroupModel(Group group) {
         try {
             Properties properties = new Properties();
             properties.load(new FileInputStream("settings_db.properties"));
-            teamMgr = new TeamMgr(properties);
-            this.teams = teamMgr.list();
+            groupMgr = new GroupMgr(properties);
+            this.teams = groupMgr.listTeams(group);
         } catch (IOException | SQLException ex) {
             this.teams = new ArrayList<>();
-            JOptionPane.showMessageDialog(null, "Error al cargar el listado de equipos");
+            JOptionPane.showMessageDialog(null, "Hubo un error al traer el listado de equipos de este grupo");
         }
     }
     //</editor-fold>
@@ -99,8 +103,8 @@ public class TeamsModel extends AbstractListModel implements ComboBoxModel {
     private Team selected;
 
     /**
-     * Administrador de equipo
+     * Administrador de grupo
      */
-    private TeamMgr teamMgr;
+    private GroupMgr groupMgr;
     //</editor-fold>
 }

@@ -2,13 +2,8 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.entities.Tournament;
-import com.leandrobaena.kickoff.logic.GroupMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListGroupTableModel;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -139,24 +134,16 @@ public class EditGroup extends javax.swing.JDialog {
      */
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         this.group.setName(this.txtName.getText());
-        Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream("settings_db.properties"));
-            GroupMgr groupMgr = new GroupMgr(properties);
+            ListGroupTableModel model = ListGroupTableModel.getInstance(group.getTournament());
             if (this.group.getIdGroup() == 0) {
-                groupMgr.insert(this.group);
+                model.insertGroup(this.group);
                 JOptionPane.showMessageDialog(null, "Grupo insertado con éxito");
             } else {
-                groupMgr.update(this.group);
+                model.updateGroup(this.group);
                 JOptionPane.showMessageDialog(null, "Grupo actualizado con éxito");
             }
-            ListGroupTableModel model = ListGroupTableModel.getInstance();
-            model.setGroups(groupMgr.list(this.group.getTournament()));
             this.dispose();
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         }

@@ -2,13 +2,8 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Parameter;
 import com.leandrobaena.kickoff.entities.Tournament;
-import com.leandrobaena.kickoff.logic.ParameterMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListParameterTableModel;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -92,27 +87,22 @@ public class EditParameter extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(71, 71, 71)
+                        .addComponent(btnOk)
+                        .addGap(55, 55, 55)
+                        .addComponent(btnCancel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblIdentification)
-                                    .addComponent(lblName))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                                    .addComponent(txtIdentification)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(71, 71, 71)
-                                .addComponent(btnOk)
-                                .addGap(55, 55, 55)
-                                .addComponent(btnCancel)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lblValue)
+                            .addComponent(lblIdentification)
+                            .addComponent(lblName)
+                            .addComponent(lblValue))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtValue)))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtValue)
+                            .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                            .addComponent(txtIdentification))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -157,24 +147,16 @@ public class EditParameter extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         this.parameter.setName(this.txtName.getText());
         this.parameter.setValue(this.txtValue.getText());
-        Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream("settings_db.properties"));
-            ParameterMgr parameterMgr = new ParameterMgr(properties);
+            ListParameterTableModel model = ListParameterTableModel.getInstance(parameter.getTournament());
             if (this.parameter.getIdParameter() == 0) {
-                parameterMgr.insert(this.parameter);
+                model.insertParameter(this.parameter);
                 JOptionPane.showMessageDialog(null, "Parámetro insertado con éxito");
             } else {
-                parameterMgr.update(this.parameter);
+                model.updateParameter(this.parameter);
                 JOptionPane.showMessageDialog(null, "Parámetro actualizado con éxito");
             }
-            ListParameterTableModel model = ListParameterTableModel.getInstance();
-            model.setTeams(parameterMgr.list(this.parameter.getTournament()));
             this.dispose();
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         }

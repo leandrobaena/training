@@ -1,13 +1,8 @@
 package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Tournament;
-import com.leandrobaena.kickoff.logic.TournamentMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListTournamentTableModel;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -136,24 +131,16 @@ public class EditTournament extends javax.swing.JDialog {
      */
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         this.tournament.setName(this.txtName.getText());
-        Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream("settings_db.properties"));
-            TournamentMgr tournamentMgr = new TournamentMgr(properties);
-            if (this.tournament.getIdTournament()== 0) {
-                tournamentMgr.insert(this.tournament);
+            ListTournamentTableModel model = ListTournamentTableModel.getInstance();
+            if (this.tournament.getIdTournament() == 0) {
+                model.insertTournament(this.tournament);
                 JOptionPane.showMessageDialog(null, "Torneo insertado con éxito");
             } else {
-                tournamentMgr.update(this.tournament);
+                model.updateTournament(this.tournament);
                 JOptionPane.showMessageDialog(null, "Torneo actualizado con éxito");
             }
-            ListTournamentTableModel model = ListTournamentTableModel.getInstance();
-            model.setTournaments(tournamentMgr.list());
             this.dispose();
-        } catch (FileNotFoundException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo encontrar el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
         }

@@ -1,7 +1,14 @@
 package com.leandrobaena.kickoff.view.tablemodel;
 
 import com.leandrobaena.kickoff.entities.Parameter;
+import com.leandrobaena.kickoff.entities.Tournament;
+import com.leandrobaena.kickoff.logic.ParameterMgr;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -14,9 +21,16 @@ public class ListParameterTableModel extends DefaultTableModel {
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Crea un modelo de tabla para el listado de parámetros
+     *
+     * @param tournament Torneo al que pertenecen los parámetros o null si son
+     * generales
      */
-    private ListParameterTableModel() {
-        this.parameters = new ArrayList<>();
+    private ListParameterTableModel(Tournament tournament) throws FileNotFoundException, IOException, SQLException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        parameterMgr = new ParameterMgr(properties);
+        this.tournament = tournament;
+        update();
     }
     //</editor-fold>
 
@@ -24,23 +38,26 @@ public class ListParameterTableModel extends DefaultTableModel {
     /**
      * Trae la única instancia de esta clase
      *
+     * @param tournament Torneo al que pertenecen los parámetros o null si son
+     * generales
      * @return Única instancia de esta clase
      */
-    public static ListParameterTableModel getInstance() {
+    public static ListParameterTableModel getInstance(Tournament tournament) {
         if (instance == null) {
-            instance = new ListParameterTableModel();
+            try {
+                instance = new ListParameterTableModel(tournament);
+            } catch (IOException | SQLException ex) {
+                return null;
+            }
+        } else {
+            instance.tournament = tournament;
+            try {
+                instance.update();
+            } catch (SQLException ex) {
+                return null;
+            }
         }
         return instance;
-    }
-
-    /**
-     * Actualiza el listado de parámetros
-     *
-     * @param parameters Nuevo listado de parámetros
-     */
-    public void setTeams(ArrayList<Parameter> parameters) {
-        this.parameters = parameters;
-        this.fireTableDataChanged();
     }
 
     /**
@@ -113,6 +130,49 @@ public class ListParameterTableModel extends DefaultTableModel {
     public Parameter getSelectedParameter(int row) {
         return parameters.get(row);
     }
+
+    /**
+     * Inserta un parámetro
+     *
+     * @param parameter Parámetro a insertar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void insertParameter(Parameter parameter) throws SQLException {
+        parameterMgr.insert(parameter);
+        update();
+    }
+
+    /**
+     * Actualiza un parámetro
+     *
+     * @param parameter Parámetro a actualizar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void updateParameter(Parameter parameter) throws SQLException {
+        parameterMgr.update(parameter);
+        update();
+    }
+
+    /**
+     * Elimina un parámetro en una ubicación determinada
+     *
+     * @param index Ubicación del parámetro a eliminar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void deleteParameter(int index) throws SQLException {
+        parameterMgr.delete(parameters.get(index));
+        update();
+    }
+
+    /**
+     * Actualiza el listado de parámetros
+     *
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    private void update() throws SQLException {
+        this.parameters = parameterMgr.list(tournament);
+        this.fireTableDataChanged();
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
@@ -125,5 +185,15 @@ public class ListParameterTableModel extends DefaultTableModel {
      * Única instancia del modelo de la tabla de parámetros
      */
     private static ListParameterTableModel instance = null;
+
+    /**
+     * Administrador de parámetros
+     */
+    private final ParameterMgr parameterMgr;
+
+    /**
+     * Torneo al que pertenecen los parámetros o null si son generales
+     */
+    private Tournament tournament;
     //</editor-fold>
 }

@@ -64,6 +64,16 @@ public class Stadium {
     public void setName(String name) {
         this.name = name;
     }
+
+    /**
+     * Retorna el nombre del estadio
+     *
+     * @return Nombre del estadio
+     */
+    @Override
+    public String toString() {
+        return name;
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">

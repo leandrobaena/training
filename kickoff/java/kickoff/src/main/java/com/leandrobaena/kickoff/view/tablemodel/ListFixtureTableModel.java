@@ -1,8 +1,16 @@
 package com.leandrobaena.kickoff.view.tablemodel;
 
 import com.leandrobaena.kickoff.entities.Fixture;
+import com.leandrobaena.kickoff.entities.Group;
+import com.leandrobaena.kickoff.logic.FixtureMgr;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Properties;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -16,9 +24,15 @@ public class ListFixtureTableModel extends DefaultTableModel {
     /**
      * Crea un modelo de tabla para el listado de fechas de juegos de equipos de
      * un grupo
+     *
+     * @param group Grupo al que pertenecen las fechas
      */
-    private ListFixtureTableModel() {
-        this.fixtures = new ArrayList<>();
+    private ListFixtureTableModel(Group group) throws FileNotFoundException, IOException, SQLException, ParseException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        fixtureMgr = new FixtureMgr(properties);
+        this.group = group;
+        update();
     }
     //</editor-fold>
 
@@ -26,23 +40,25 @@ public class ListFixtureTableModel extends DefaultTableModel {
     /**
      * Trae la única instancia de esta clase
      *
+     * @param group Grupo al que pertenecen las fechas
      * @return Única instancia de esta clase
      */
-    public static ListFixtureTableModel getInstance() {
+    public static ListFixtureTableModel getInstance(Group group) {
         if (instance == null) {
-            instance = new ListFixtureTableModel();
+            try {
+                instance = new ListFixtureTableModel(group);
+            } catch (IOException | SQLException | ParseException ex) {
+                return null;
+            }
+        } else {
+            instance.group = group;
+            try {
+                instance.update();
+            } catch (SQLException | ParseException ex) {
+                return null;
+            }
         }
         return instance;
-    }
-
-    /**
-     * Actualiza el listado de fechas
-     *
-     * @param fixtures Nuevo listado de fechas
-     */
-    public void setFixtures(ArrayList<Fixture> fixtures) {
-        this.fixtures = fixtures;
-        this.fireTableDataChanged();
     }
 
     /**
@@ -128,6 +144,49 @@ public class ListFixtureTableModel extends DefaultTableModel {
     public Fixture getSelectedFixture(int row) {
         return fixtures.get(row);
     }
+
+    /**
+     * Inserta una fecha
+     *
+     * @param fixture Fecha a insertar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void insertFixture(Fixture fixture) throws SQLException, ParseException {
+        fixtureMgr.insert(fixture);
+        update();
+    }
+
+    /**
+     * Actualiza una fecha
+     *
+     * @param fixture Fecha a actualizar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void updateFixture(Fixture fixture) throws SQLException, ParseException {
+        fixtureMgr.update(fixture);
+        update();
+    }
+
+    /**
+     * Elimina una fecha en una ubicación determinada
+     *
+     * @param index Ubicación de la fecha a eliminar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void deleteFixture(int index) throws SQLException, ParseException {
+        fixtureMgr.delete(fixtures.get(index));
+        update();
+    }
+
+    /**
+     * Actualiza el listado de fecha de un grupo
+     *
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    private void update() throws SQLException, ParseException {
+        this.fixtures = fixtureMgr.list(group);
+        this.fireTableDataChanged();
+    }
     //</editor-fold>
 
     //<editor-fold desc="Atributos" defaultstate="collapsed">
@@ -140,5 +199,15 @@ public class ListFixtureTableModel extends DefaultTableModel {
      * Única instancia del modelo de la tabla de fechas
      */
     private static ListFixtureTableModel instance = null;
+
+    /**
+     * Administrador de fechas
+     */
+    private final FixtureMgr fixtureMgr;
+
+    /**
+     * Grupo al que pertenecen las fechas
+     */
+    private Group group;
     //</editor-fold>
 }

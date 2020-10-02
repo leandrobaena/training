@@ -1,7 +1,13 @@
 package com.leandrobaena.kickoff.view.tablemodel;
 
 import com.leandrobaena.kickoff.entities.Stadium;
+import com.leandrobaena.kickoff.logic.StadiumMgr;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Properties;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -14,9 +20,16 @@ public class ListStadiumTableModel extends DefaultTableModel {
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Crea un modelo de tabla para el listado de estadios
+     *
+     * @throws IOException Si no puede leer el archivo de propiedades
+     * @throws FileNotFoundException Si no encuentra el archivo de propiedades
+     * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    private ListStadiumTableModel() {
-        this.stadiums = new ArrayList<>();
+    private ListStadiumTableModel() throws FileNotFoundException, IOException, SQLException {
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("settings_db.properties"));
+        stadiumMgr = new StadiumMgr(properties);
+        update();
     }
     //</editor-fold>
 
@@ -28,19 +41,23 @@ public class ListStadiumTableModel extends DefaultTableModel {
      */
     public static ListStadiumTableModel getInstance() {
         if (instance == null) {
-            instance = new ListStadiumTableModel();
+            try {
+                instance = new ListStadiumTableModel();
+            } catch (IOException | SQLException ex) {
+                return null;
+            }
         }
         return instance;
     }
 
     /**
-     * Actualiza el listado de estadios
+     * Trae el estadio seleccionado
      *
-     * @param stadiums Nuevo listado de estadios
+     * @param row Fila seleccionada
+     * @return Estadio seleccionado
      */
-    public void setStadiums(ArrayList<Stadium> stadiums) {
-        this.stadiums = stadiums;
-        this.fireTableDataChanged();
+    public Stadium getSelectedStadium(int row) {
+        return stadiums.get(row);
     }
 
     /**
@@ -101,13 +118,46 @@ public class ListStadiumTableModel extends DefaultTableModel {
     }
 
     /**
-     * Trae el estadio seleccionado
+     * Inserta un estadio
      *
-     * @param row Fila seleccionada
-     * @return Estadio seleccionado
+     * @param stadium Estadio a insertar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    public Stadium getSelectedTeam(int row) {
-        return stadiums.get(row);
+    public void insertStadium(Stadium stadium) throws SQLException {
+        stadiumMgr.insert(stadium);
+        update();
+    }
+
+    /**
+     * Actualiza un estadio
+     *
+     * @param stadium Estadio a actualizar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void updateStadium(Stadium stadium) throws SQLException {
+        stadiumMgr.update(stadium);
+        update();
+    }
+
+    /**
+     * Elimina un estadio en una ubicación determinada
+     *
+     * @param index Ubicación del estadio a eliminar
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    public void deleteStadium(int index) throws SQLException {
+        stadiumMgr.delete(stadiums.get(index));
+        update();
+    }
+
+    /**
+     * Actualiza el listado de estadios
+     *
+     * @throws SQLException Si hay un error en la conexión a la base de datos
+     */
+    private void update() throws SQLException {
+        this.stadiums = stadiumMgr.list();
+        this.fireTableDataChanged();
     }
     //</editor-fold>
 
@@ -121,5 +171,10 @@ public class ListStadiumTableModel extends DefaultTableModel {
      * Única instancia del modelo de la tabla de estadios
      */
     private static ListStadiumTableModel instance = null;
+
+    /**
+     * Administrador de los estadios
+     */
+    private final StadiumMgr stadiumMgr;
     //</editor-fold>
 }

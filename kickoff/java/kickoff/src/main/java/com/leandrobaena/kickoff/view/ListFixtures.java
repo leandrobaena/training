@@ -2,18 +2,13 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Fixture;
 import com.leandrobaena.kickoff.entities.Group;
-import com.leandrobaena.kickoff.logic.FixtureMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListFixtureTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -38,12 +33,8 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
      * @throws java.text.ParseException
      */
     public ListFixtures(Group group) throws FileNotFoundException, IOException, SQLException, ParseException {
-        initComponents();
         this.group = group;
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        fixtureMgr = new FixtureMgr(properties);
-        ((ListFixtureTableModel) tblFixtures.getModel()).setFixtures(fixtureMgr.list(this.group));
+        initComponents();
         tblFixtures.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
@@ -65,7 +56,7 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblFixtures.setModel(ListFixtureTableModel.getInstance());
+        tblFixtures.setModel(ListFixtureTableModel.getInstance(this.group));
         tblFixtures.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblFixtures);
 
@@ -158,14 +149,11 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
             if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar la fecha?", "Borrar fecha", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Fixture selected = ((ListFixtureTableModel) tblFixtures.getModel()).getSelectedFixture(tblFixtures.getSelectedRow());
-                fixtureMgr.delete(selected);
-                ListFixtureTableModel model = ListFixtureTableModel.getInstance();
-                model.setFixtures(fixtureMgr.list(this.group));
-                JOptionPane.showMessageDialog(null, "Jugador eliminado con éxito");
+                ((ListFixtureTableModel) tblFixtures.getModel()).deleteFixture(tblFixtures.getSelectedRow());
+                JOptionPane.showMessageDialog(null, "Fecha eliminada con éxito");
             }
         } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar el jugador");
+            JOptionPane.showMessageDialog(null, "Hubo un error al eliminar la fecha");
         } catch (ParseException ex) {
             JOptionPane.showMessageDialog(null, "Hubo un error al leer una fecha");
         }
@@ -243,7 +231,6 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblFixtures;
     // End of variables declaration//GEN-END:variables
-    private final FixtureMgr fixtureMgr;
     private final Group group;
     //</editor-fold>
 }

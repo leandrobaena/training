@@ -2,15 +2,10 @@ package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Parameter;
 import com.leandrobaena.kickoff.entities.Tournament;
-import com.leandrobaena.kickoff.logic.ParameterMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListParameterTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Properties;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -29,17 +24,10 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
      * Inicializa los componentes del listado de parámetros
      *
      * @param tournament Torneo al que pertenecen los parámetros
-     * @throws java.io.FileNotFoundException
-     * @throws java.io.IOException
-     * @throws java.sql.SQLException
      */
-    public ListParameters(Tournament tournament) throws FileNotFoundException, IOException, SQLException {
-        initComponents();
+    public ListParameters(Tournament tournament) {
         this.tournament = tournament;
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        parameterMgr = new ParameterMgr(properties);
-        ((ListParameterTableModel) tblParameters.getModel()).setTeams(parameterMgr.list(this.tournament));
+        initComponents();
         tblParameters.getSelectionModel().addListSelectionListener(this);
     }
     //</editor-fold>
@@ -61,7 +49,7 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblParameters.setModel(ListParameterTableModel.getInstance());
+        tblParameters.setModel(ListParameterTableModel.getInstance(this.tournament));
         tblParameters.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblParameters);
 
@@ -154,10 +142,7 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         try {
             if (JOptionPane.showConfirmDialog(null, "¿Está seguro que desea eliminar el parámetro?", "Borrar parámetro", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                Parameter selected = ((ListParameterTableModel) tblParameters.getModel()).getSelectedParameter(tblParameters.getSelectedRow());
-                parameterMgr.delete(selected);
-                ListParameterTableModel model = ListParameterTableModel.getInstance();
-                model.setTeams(parameterMgr.list(this.tournament));
+                ((ListParameterTableModel) tblParameters.getModel()).deleteParameter(tblParameters.getSelectedRow());
                 JOptionPane.showMessageDialog(null, "Parámetro eliminado con éxito");
             }
         } catch (SQLException ex) {
@@ -211,7 +196,7 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
             btnDelete.setEnabled(true);
         }
     }
-    
+
     /**
      * Trae el panel tabulado al que pertenece este panel
      *
@@ -237,7 +222,6 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblParameters;
     // End of variables declaration//GEN-END:variables
-    private final ParameterMgr parameterMgr;
     private final Tournament tournament;
     //</editor-fold>
 }
