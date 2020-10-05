@@ -18,12 +18,14 @@ public class EditTournament extends javax.swing.JDialog {
      * Crea un nuevo formulario de edición de un equipo
      *
      * @param tournament Equipo que va a editar o insertar
+     * @param model Modelo de la tabla de torneos
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditTournament(Tournament tournament, JFrame owner) {
+    public EditTournament(Tournament tournament, ListTournamentTableModel model, JFrame owner) {
         super(owner, true);
         initComponents();
+        this.model = model;
         this.tournament = tournament;
         this.txtIdentification.setText("" + this.tournament.getIdTournament());
         this.txtName.setText(this.tournament.getName());
@@ -132,7 +134,6 @@ public class EditTournament extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         this.tournament.setName(this.txtName.getText());
         try {
-            ListTournamentTableModel model = ListTournamentTableModel.getInstance();
             if (this.tournament.getIdTournament() == 0) {
                 model.insertTournament(this.tournament);
                 JOptionPane.showMessageDialog(null, "Torneo insertado con éxito");
@@ -157,5 +158,6 @@ public class EditTournament extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
     private final Tournament tournament;
+    ListTournamentTableModel model;
     //</editor-fold>
 }

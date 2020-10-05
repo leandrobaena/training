@@ -4,13 +4,13 @@ import com.leandrobaena.kickoff.entities.Fixture;
 import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.logic.FixtureMgr;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,40 +27,20 @@ public class ListFixtureTableModel extends DefaultTableModel {
      *
      * @param group Grupo al que pertenecen las fechas
      */
-    private ListFixtureTableModel(Group group) throws FileNotFoundException, IOException, SQLException, ParseException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        fixtureMgr = new FixtureMgr(properties);
-        this.group = group;
-        update();
+    public ListFixtureTableModel(Group group) {
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("settings_db.properties"));
+            fixtureMgr = new FixtureMgr(properties);
+            this.group = group;
+            update();
+        } catch (IOException | SQLException | ParseException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al conectar a la base de datos");
+        }
     }
     //</editor-fold>
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
-    /**
-     * Trae la única instancia de esta clase
-     *
-     * @param group Grupo al que pertenecen las fechas
-     * @return Única instancia de esta clase
-     */
-    public static ListFixtureTableModel getInstance(Group group) {
-        if (instance == null) {
-            try {
-                instance = new ListFixtureTableModel(group);
-            } catch (IOException | SQLException | ParseException ex) {
-                return null;
-            }
-        } else {
-            instance.group = group;
-            try {
-                instance.update();
-            } catch (SQLException | ParseException ex) {
-                return null;
-            }
-        }
-        return instance;
-    }
-
     /**
      * Trae el número de filas de la tabla
      *
@@ -196,14 +176,9 @@ public class ListFixtureTableModel extends DefaultTableModel {
     private ArrayList<Fixture> fixtures;
 
     /**
-     * Única instancia del modelo de la tabla de fechas
-     */
-    private static ListFixtureTableModel instance = null;
-
-    /**
      * Administrador de fechas
      */
-    private final FixtureMgr fixtureMgr;
+    private FixtureMgr fixtureMgr;
 
     /**
      * Grupo al que pertenecen las fechas

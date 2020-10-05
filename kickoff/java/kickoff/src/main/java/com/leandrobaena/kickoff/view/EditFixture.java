@@ -26,11 +26,13 @@ public class EditFixture extends javax.swing.JDialog {
      *
      * @param fixture Fecha que va a editar o insertar
      * @param group Grupo al que pertenece la fecha
+     * @param model Modelo de la tabla de fechas de un grupo
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditFixture(Fixture fixture, Group group, JFrame owner) {
+    public EditFixture(Fixture fixture, Group group, ListFixtureTableModel model, JFrame owner) {
         super(owner, true);
+        this.model = model;
         this.fixture = fixture;
         this.fixture.setGroup(group);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -202,7 +204,6 @@ public class EditFixture extends javax.swing.JDialog {
             this.fixture.setName(this.txtName.getText());
             this.fixture.setDate(sdf.parse(this.txtDate.getText()));
             this.fixture.setStadium((Stadium) this.cmbStadium.getSelectedItem());
-            ListFixtureTableModel model = ListFixtureTableModel.getInstance(fixture.getGroup());
             if (this.fixture.getIdFixture() == 0) {
                 model.insertFixture(this.fixture);
                 JOptionPane.showMessageDialog(null, "Fecha insertada con éxito");
@@ -237,5 +238,6 @@ public class EditFixture extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
     private final Fixture fixture;
+    ListFixtureTableModel model;
     //</editor-fold>
 }

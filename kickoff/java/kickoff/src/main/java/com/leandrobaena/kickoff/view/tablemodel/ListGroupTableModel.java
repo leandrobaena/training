@@ -4,11 +4,11 @@ import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.entities.Tournament;
 import com.leandrobaena.kickoff.logic.GroupMgr;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,40 +24,20 @@ public class ListGroupTableModel extends DefaultTableModel {
      *
      * @param tournament Torneo al que pertenecen los grupos
      */
-    private ListGroupTableModel(Tournament tournament) throws FileNotFoundException, IOException, SQLException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        groupMgr = new GroupMgr(properties);
-        this.tournament = tournament;
-        update();
+    public ListGroupTableModel(Tournament tournament) {
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("settings_db.properties"));
+            groupMgr = new GroupMgr(properties);
+            this.tournament = tournament;
+            update();
+        } catch (IOException | SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al conectar a la base de datos");
+        }
     }
     //</editor-fold>
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
-    /**
-     * Trae la única instancia de esta clase
-     *
-     * @param tournament Torneo al que pertenecen los grupos
-     * @return Única instancia de esta clase
-     */
-    public static ListGroupTableModel getInstance(Tournament tournament) {
-        if (instance == null) {
-            try {
-                instance = new ListGroupTableModel(tournament);
-            } catch (IOException | SQLException ex) {
-                return null;
-            }
-        } else {
-            instance.tournament = tournament;
-            try {
-                instance.update();
-            } catch (SQLException ex) {
-                return null;
-            }
-        }
-        return instance;
-    }
-
     /**
      * Trae el número de filas de la tabla
      *
@@ -176,14 +156,9 @@ public class ListGroupTableModel extends DefaultTableModel {
     private ArrayList<Group> groups;
 
     /**
-     * Única instancia del modelo de la tabla de grupos
-     */
-    private static ListGroupTableModel instance = null;
-
-    /**
      * Administrador de grupos de un grupo
      */
-    private final GroupMgr groupMgr;
+    private GroupMgr groupMgr;
 
     /**
      * Torneo al que pertenecen los grupos

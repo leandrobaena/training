@@ -57,7 +57,7 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
         btnTeams = new javax.swing.JButton();
         btnFixtures = new javax.swing.JButton();
 
-        tblGroups.setModel(ListGroupTableModel.getInstance(this.tournament));
+        tblGroups.setModel(new ListGroupTableModel(this.tournament));
         tblGroups.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblGroups);
 
@@ -147,7 +147,7 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditGroup editGroup = new EditGroup(new Group(), this.tournament, getJFrame());
+        EditGroup editGroup = new EditGroup(new Group(), tournament, (ListGroupTableModel) tblGroups.getModel(), getJFrame());
         editGroup.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
@@ -159,7 +159,7 @@ public class ListGroups extends javax.swing.JPanel implements ListSelectionListe
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         Group selected = ((ListGroupTableModel) tblGroups.getModel()).getSelectedGroup(tblGroups.getSelectedRow());
         if (selected != null) {
-            EditGroup editGroup = new EditGroup(selected, this.tournament, getJFrame());
+            EditGroup editGroup = new EditGroup(selected, tournament, (ListGroupTableModel) tblGroups.getModel(), getJFrame());
             editGroup.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed

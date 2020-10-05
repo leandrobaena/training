@@ -4,8 +4,6 @@ import com.leandrobaena.kickoff.entities.Group;
 import com.leandrobaena.kickoff.entities.Team;
 import com.leandrobaena.kickoff.view.comboboxmodel.TeamsModel;
 import com.leandrobaena.kickoff.view.tablemodel.ListGroupTeamTableModel;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -22,11 +20,13 @@ public class EditGroupTeam extends javax.swing.JDialog {
      * Crea un nuevo formulario de adición de un equipo a un grupo
      *
      * @param group Grupo al que pertenecerá el equipo
+     * @param model Modelo de la tabla de equipos asignados a un grupo
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditGroupTeam(Group group, JFrame owner) throws FileNotFoundException, IOException, SQLException {
+    public EditGroupTeam(Group group, ListGroupTeamTableModel model, JFrame owner) {
         super(owner, true);
+        this.model = model;
         this.group = group;
         initComponents();
     }
@@ -122,7 +122,6 @@ public class EditGroupTeam extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         try {
             Team team = (Team) cmbTeam.getSelectedItem();
-            ListGroupTeamTableModel model = ListGroupTeamTableModel.getInstance(group);
             model.insertTeam(team);
             JOptionPane.showMessageDialog(null, "Equipo asociado con éxito");
             this.dispose();
@@ -140,5 +139,6 @@ public class EditGroupTeam extends javax.swing.JDialog {
     private javax.swing.JLabel lblTeam;
     // End of variables declaration//GEN-END:variables
     private final Group group;
+    ListGroupTeamTableModel model;
     //</editor-fold>
 }

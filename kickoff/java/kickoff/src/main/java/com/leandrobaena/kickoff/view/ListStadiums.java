@@ -45,7 +45,7 @@ public class ListStadiums extends javax.swing.JPanel implements ListSelectionLis
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblStadiums.setModel(ListStadiumTableModel.getInstance());
+        tblStadiums.setModel(new ListStadiumTableModel());
         tblStadiums.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblStadiums);
 
@@ -113,7 +113,7 @@ public class ListStadiums extends javax.swing.JPanel implements ListSelectionLis
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditStadium editStadium = new EditStadium(new Stadium(), getJFrame());
+        EditStadium editStadium = new EditStadium(new Stadium(), (ListStadiumTableModel) tblStadiums.getModel(), getJFrame());
         editStadium.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
@@ -125,7 +125,7 @@ public class ListStadiums extends javax.swing.JPanel implements ListSelectionLis
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         Stadium selected = ((ListStadiumTableModel) tblStadiums.getModel()).getSelectedStadium(tblStadiums.getSelectedRow());
         if (selected != null) {
-            EditStadium editStadium = new EditStadium(selected, getJFrame());
+            EditStadium editStadium = new EditStadium(selected, (ListStadiumTableModel) tblStadiums.getModel(), getJFrame());
             editStadium.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed

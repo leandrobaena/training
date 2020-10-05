@@ -56,7 +56,7 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblFixtures.setModel(ListFixtureTableModel.getInstance(this.group));
+        tblFixtures.setModel(new ListFixtureTableModel(this.group));
         tblFixtures.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblFixtures);
 
@@ -124,7 +124,7 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditFixture editFixture = new EditFixture(new Fixture(), this.group, getJFrame());
+        EditFixture editFixture = new EditFixture(new Fixture(), this.group, (ListFixtureTableModel) this.tblFixtures.getModel(), getJFrame());
         editFixture.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
@@ -136,7 +136,7 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         Fixture selected = ((ListFixtureTableModel) tblFixtures.getModel()).getSelectedFixture(tblFixtures.getSelectedRow());
         if (selected != null) {
-            EditFixture editFixture = new EditFixture(selected, this.group, getJFrame());
+            EditFixture editFixture = new EditFixture(selected, this.group, (ListFixtureTableModel) this.tblFixtures.getModel(), getJFrame());
             editFixture.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed

@@ -18,12 +18,14 @@ public class EditTeam extends javax.swing.JDialog {
      * Crea un nuevo formulario de edición de un equipo
      *
      * @param team Equipo que va a editar o insertar
+     * @param model Modelo de la lista de equipos
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditTeam(Team team, JFrame owner) {
+    public EditTeam(Team team, ListTeamTableModel model, JFrame owner) {
         super(owner, true);
         initComponents();
+        this.model = model;
         this.team = team;
         this.txtIdentification.setText("" + this.team.getIdTeam());
         this.txtName.setText(this.team.getName());
@@ -132,7 +134,6 @@ public class EditTeam extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         this.team.setName(this.txtName.getText());
         try {
-            ListTeamTableModel model = ListTeamTableModel.getInstance();
             if (this.team.getIdTeam() == 0) {
                 model.insertTeam(this.team);
                 JOptionPane.showMessageDialog(null, "Equipo insertado con éxito");
@@ -157,5 +158,6 @@ public class EditTeam extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
     private final Team team;
+    ListTeamTableModel model;
     //</editor-fold>
 }

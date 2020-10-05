@@ -1,7 +1,6 @@
 package com.leandrobaena.kickoff.view;
 
 import com.leandrobaena.kickoff.entities.Tournament;
-import com.leandrobaena.kickoff.logic.TournamentMgr;
 import com.leandrobaena.kickoff.view.tablemodel.ListTournamentTableModel;
 import java.awt.Container;
 import java.awt.Graphics;
@@ -50,7 +49,7 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
         btnParameters = new javax.swing.JButton();
         btnGroups = new javax.swing.JButton();
 
-        tblTournaments.setModel(ListTournamentTableModel.getInstance());
+        tblTournaments.setModel(new ListTournamentTableModel());
         tblTournaments.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblTournaments);
 
@@ -140,7 +139,7 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditTournament editTournament = new EditTournament(new Tournament(), getJFrame());
+        EditTournament editTournament = new EditTournament(new Tournament(), (ListTournamentTableModel) tblTournaments.getModel(), getJFrame());
         editTournament.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
@@ -152,7 +151,7 @@ public class ListTournaments extends javax.swing.JPanel implements ListSelection
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         Tournament selected = ((ListTournamentTableModel) tblTournaments.getModel()).getSelectedTournament(tblTournaments.getSelectedRow());
         if (selected != null) {
-            EditTournament editTournament = new EditTournament(selected, getJFrame());
+            EditTournament editTournament = new EditTournament(selected, (ListTournamentTableModel) tblTournaments.getModel(), getJFrame());
             editTournament.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed

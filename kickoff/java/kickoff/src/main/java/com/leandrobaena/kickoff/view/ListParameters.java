@@ -49,7 +49,7 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblParameters.setModel(ListParameterTableModel.getInstance(this.tournament));
+        tblParameters.setModel(new ListParameterTableModel(tournament));
         tblParameters.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblParameters);
 
@@ -117,7 +117,7 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditParameter editParameter = new EditParameter(new Parameter(), this.tournament, getJFrame());
+        EditParameter editParameter = new EditParameter(new Parameter(), this.tournament, (ListParameterTableModel) tblParameters.getModel(), getJFrame());
         editParameter.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
@@ -129,7 +129,7 @@ public class ListParameters extends javax.swing.JPanel implements ListSelectionL
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         Parameter selected = ((ListParameterTableModel) tblParameters.getModel()).getSelectedParameter(tblParameters.getSelectedRow());
         if (selected != null) {
-            EditParameter editParameter = new EditParameter(selected, this.tournament, getJFrame());
+            EditParameter editParameter = new EditParameter(selected, tournament, (ListParameterTableModel) tblParameters.getModel(), getJFrame());
             editParameter.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed

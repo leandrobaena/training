@@ -4,11 +4,11 @@ import com.leandrobaena.kickoff.entities.Parameter;
 import com.leandrobaena.kickoff.entities.Tournament;
 import com.leandrobaena.kickoff.logic.ParameterMgr;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -25,41 +25,20 @@ public class ListParameterTableModel extends DefaultTableModel {
      * @param tournament Torneo al que pertenecen los parámetros o null si son
      * generales
      */
-    private ListParameterTableModel(Tournament tournament) throws FileNotFoundException, IOException, SQLException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        parameterMgr = new ParameterMgr(properties);
-        this.tournament = tournament;
-        update();
+    public ListParameterTableModel(Tournament tournament) {
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("settings_db.properties"));
+            parameterMgr = new ParameterMgr(properties);
+            this.tournament = tournament;
+            update();
+        } catch (IOException | SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al conectar a la base de datos");
+        }
     }
     //</editor-fold>
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
-    /**
-     * Trae la única instancia de esta clase
-     *
-     * @param tournament Torneo al que pertenecen los parámetros o null si son
-     * generales
-     * @return Única instancia de esta clase
-     */
-    public static ListParameterTableModel getInstance(Tournament tournament) {
-        if (instance == null) {
-            try {
-                instance = new ListParameterTableModel(tournament);
-            } catch (IOException | SQLException ex) {
-                return null;
-            }
-        } else {
-            instance.tournament = tournament;
-            try {
-                instance.update();
-            } catch (SQLException ex) {
-                return null;
-            }
-        }
-        return instance;
-    }
-
     /**
      * Trae el número de filas de la tabla
      *
@@ -182,14 +161,9 @@ public class ListParameterTableModel extends DefaultTableModel {
     private ArrayList<Parameter> parameters;
 
     /**
-     * Única instancia del modelo de la tabla de parámetros
-     */
-    private static ListParameterTableModel instance = null;
-
-    /**
      * Administrador de parámetros
      */
-    private final ParameterMgr parameterMgr;
+    private ParameterMgr parameterMgr;
 
     /**
      * Torneo al que pertenecen los parámetros o null si son generales

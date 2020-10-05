@@ -4,11 +4,11 @@ import com.leandrobaena.kickoff.entities.Player;
 import com.leandrobaena.kickoff.entities.Team;
 import com.leandrobaena.kickoff.logic.PlayerMgr;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -24,40 +24,20 @@ public class ListPlayerTableModel extends DefaultTableModel {
      *
      * @param team Equipo al que pertenecen los jugadores
      */
-    private ListPlayerTableModel(Team team) throws FileNotFoundException, IOException, SQLException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        playerMgr = new PlayerMgr(properties);
-        this.team = team;
-        update();
+    public ListPlayerTableModel(Team team) {
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("settings_db.properties"));
+            playerMgr = new PlayerMgr(properties);
+            this.team = team;
+            update();
+        } catch (IOException | SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al conectar a la base de datos");
+        }
     }
     //</editor-fold>
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
-    /**
-     * Trae la única instancia de esta clase
-     *
-     * @param team Equipo al que pertenecen los jugadores
-     * @return Única instancia de esta clase
-     */
-    public static ListPlayerTableModel getInstance(Team team) {
-        if (instance == null) {
-            try {
-                instance = new ListPlayerTableModel(team);
-            } catch (IOException | SQLException ex) {
-                return null;
-            }
-        } else {
-            instance.team = team;
-            try {
-                instance.update();
-            } catch (SQLException ex) {
-                return null;
-            }
-        }
-        return instance;
-    }
-
     /**
      * Trae el número de filas de la tabla
      *
@@ -180,14 +160,9 @@ public class ListPlayerTableModel extends DefaultTableModel {
     private ArrayList<Player> players;
 
     /**
-     * Única instancia del modelo de la tabla de jugadores
-     */
-    private static ListPlayerTableModel instance = null;
-
-    /**
      * Administrador del jugador
      */
-    private final PlayerMgr playerMgr;
+    private PlayerMgr playerMgr;
 
     /**
      * Equipo al que pertenecen los jugadores

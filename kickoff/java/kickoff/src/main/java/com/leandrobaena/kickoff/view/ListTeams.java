@@ -48,7 +48,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
         btnClose = new javax.swing.JButton();
         btnPlayers = new javax.swing.JButton();
 
-        tblTeams.setModel(ListTeamTableModel.getInstance());
+        tblTeams.setModel(new ListTeamTableModel());
         tblTeams.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblTeams);
 
@@ -127,7 +127,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditTeam editTeam = new EditTeam(new Team(), getJFrame());
+        EditTeam editTeam = new EditTeam(new Team(), (ListTeamTableModel) this.tblTeams.getModel(), getJFrame());
         editTeam.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
@@ -139,7 +139,7 @@ public class ListTeams extends javax.swing.JPanel implements ListSelectionListen
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         Team selected = ((ListTeamTableModel) tblTeams.getModel()).getSelectedTeam(tblTeams.getSelectedRow());
         if (selected != null) {
-            EditTeam editTeam = new EditTeam(selected, getJFrame());
+            EditTeam editTeam = new EditTeam(selected, (ListTeamTableModel) this.tblTeams.getModel(), getJFrame());
             editTeam.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed

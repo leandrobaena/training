@@ -20,12 +20,14 @@ public class EditGroup extends javax.swing.JDialog {
      *
      * @param group Grupo que va a editar o insertar
      * @param tournament Torneo al que pertenece el grupo o null si es general
+     * @param model Modelo de la tabla de grupos de un torneo
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditGroup(Group group, Tournament tournament, JFrame owner) {
+    public EditGroup(Group group, Tournament tournament, ListGroupTableModel model, JFrame owner) {
         super(owner, true);
         initComponents();
+        this.model = model;
         this.group = group;
         this.group.setTournament(tournament);
         this.txtIdentification.setText("" + this.group.getIdGroup());
@@ -135,7 +137,6 @@ public class EditGroup extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         this.group.setName(this.txtName.getText());
         try {
-            ListGroupTableModel model = ListGroupTableModel.getInstance(group.getTournament());
             if (this.group.getIdGroup() == 0) {
                 model.insertGroup(this.group);
                 JOptionPane.showMessageDialog(null, "Grupo insertado con éxito");
@@ -160,5 +161,6 @@ public class EditGroup extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
     private final Group group;
+    ListGroupTableModel model;
     //</editor-fold>
 }

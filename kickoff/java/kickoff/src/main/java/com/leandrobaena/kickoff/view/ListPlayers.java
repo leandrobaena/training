@@ -54,7 +54,7 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblPlayers.setModel(ListPlayerTableModel.getInstance(this.team));
+        tblPlayers.setModel(new ListPlayerTableModel(team));
         tblPlayers.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblPlayers);
 
@@ -122,7 +122,7 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        EditPlayer editPlayer = new EditPlayer(new Player(), this.team, getJFrame());
+        EditPlayer editPlayer = new EditPlayer(new Player(), team, (ListPlayerTableModel) tblPlayers.getModel(), getJFrame());
         editPlayer.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
@@ -134,7 +134,7 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
         Player selected = ((ListPlayerTableModel) tblPlayers.getModel()).getSelectedGroup(tblPlayers.getSelectedRow());
         if (selected != null) {
-            EditPlayer editPlayer = new EditPlayer(selected, this.team, getJFrame());
+            EditPlayer editPlayer = new EditPlayer(selected, this.team, (ListPlayerTableModel) tblPlayers.getModel(), getJFrame());
             editPlayer.setVisible(true);
         }
     }//GEN-LAST:event_btnUpdateActionPerformed
@@ -201,7 +201,7 @@ public class ListPlayers extends javax.swing.JPanel implements ListSelectionList
             btnDelete.setEnabled(true);
         }
     }
-    
+
     /**
      * Trae el panel tabulado al que pertenece este panel
      *

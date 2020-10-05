@@ -3,11 +3,11 @@ package com.leandrobaena.kickoff.view.tablemodel;
 import com.leandrobaena.kickoff.entities.Tournament;
 import com.leandrobaena.kickoff.logic.TournamentMgr;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,31 +21,19 @@ public class ListTournamentTableModel extends DefaultTableModel {
     /**
      * Crea un modelo de tabla para el listado de torneos
      */
-    private ListTournamentTableModel() throws FileNotFoundException, IOException, SQLException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        tournamentMgr = new TournamentMgr(properties);
-        update();
+    public ListTournamentTableModel() {
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("settings_db.properties"));
+            tournamentMgr = new TournamentMgr(properties);
+            update();
+        } catch (IOException | SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al conectar a la base de datos");
+        }
     }
     //</editor-fold>
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
-    /**
-     * Trae la única instancia de esta clase
-     *
-     * @return Única instancia de esta clase
-     */
-    public static ListTournamentTableModel getInstance() {
-        if (instance == null) {
-            try {
-                instance = new ListTournamentTableModel();
-            } catch (IOException | SQLException ex) {
-                return null;
-            }
-        }
-        return instance;
-    }
-
     /**
      * Trae el número de filas de la tabla
      *
@@ -164,13 +152,8 @@ public class ListTournamentTableModel extends DefaultTableModel {
     private ArrayList<Tournament> tournaments;
 
     /**
-     * Única instancia del modelo de la tabla de equipos
-     */
-    private static ListTournamentTableModel instance = null;
-
-    /**
      * Administrador de los torneos
      */
-    private final TournamentMgr tournamentMgr;
+    private TournamentMgr tournamentMgr;
     //</editor-fold>
 }

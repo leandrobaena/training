@@ -21,12 +21,14 @@ public class EditParameter extends javax.swing.JDialog {
      * @param parameter Parámetro que va a editar o insertar
      * @param tournament Torneo al que pertenece el parámetro o null si es
      * general
+     * @param model Modelo de la tabla de parámetros generales o de un torneo
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditParameter(Parameter parameter, Tournament tournament, JFrame owner) {
+    public EditParameter(Parameter parameter, Tournament tournament, ListParameterTableModel model, JFrame owner) {
         super(owner, true);
         initComponents();
+        this.model = model;
         this.parameter = parameter;
         this.parameter.setTournament(tournament);
         this.txtIdentification.setText("" + this.parameter.getIdParameter());
@@ -148,7 +150,6 @@ public class EditParameter extends javax.swing.JDialog {
         this.parameter.setName(this.txtName.getText());
         this.parameter.setValue(this.txtValue.getText());
         try {
-            ListParameterTableModel model = ListParameterTableModel.getInstance(parameter.getTournament());
             if (this.parameter.getIdParameter() == 0) {
                 model.insertParameter(this.parameter);
                 JOptionPane.showMessageDialog(null, "Parámetro insertado con éxito");
@@ -175,5 +176,6 @@ public class EditParameter extends javax.swing.JDialog {
     private javax.swing.JTextField txtValue;
     // End of variables declaration//GEN-END:variables
     private final Parameter parameter;
+    ListParameterTableModel model;
     //</editor-fold>
 }

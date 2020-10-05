@@ -18,12 +18,14 @@ public class EditStadium extends javax.swing.JDialog {
      * Crea un nuevo formulario de edición de un estadio
      *
      * @param stadium Estadio que va a editar o insertar
+     * @param model Modelo de la tabla de estadios
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditStadium(Stadium stadium, JFrame owner) {
+    public EditStadium(Stadium stadium, ListStadiumTableModel model, JFrame owner) {
         super(owner, true);
         initComponents();
+        this.model = model;
         this.stadium = stadium;
         this.txtIdentification.setText("" + this.stadium.getIdStadium());
         this.txtName.setText(this.stadium.getName());
@@ -132,7 +134,6 @@ public class EditStadium extends javax.swing.JDialog {
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
         this.stadium.setName(this.txtName.getText());
         try {
-            ListStadiumTableModel model = ListStadiumTableModel.getInstance();
             if (this.stadium.getIdStadium() == 0) {
                 model.insertStadium(this.stadium);
                 JOptionPane.showMessageDialog(null, "Estadio insertado con éxito");
@@ -157,5 +158,6 @@ public class EditStadium extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
     private final Stadium stadium;
+    ListStadiumTableModel model;
     //</editor-fold>
 }

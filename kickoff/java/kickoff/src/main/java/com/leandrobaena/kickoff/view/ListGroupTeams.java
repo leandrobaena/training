@@ -52,7 +52,7 @@ public class ListGroupTeams extends javax.swing.JPanel implements ListSelectionL
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
-        tblGroupTeams.setModel(ListGroupTeamTableModel.getInstance(this.group));
+        tblGroupTeams.setModel(new ListGroupTeamTableModel(this.group));
         tblGroupTeams.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblGroupTeams);
 
@@ -109,14 +109,8 @@ public class ListGroupTeams extends javax.swing.JPanel implements ListSelectionL
      * @param evt Evento al hacer clic en el botón Insertar
      */
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        try {
-            EditGroupTeam editGroupTeam = new EditGroupTeam(group, getJFrame());
-            editGroupTeam.setVisible(true);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "No se pudo leer el archivo de configuración de la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Hubo un error al conectar a la base de datos", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        EditGroupTeam editGroupTeam = new EditGroupTeam(group, (ListGroupTeamTableModel) this.tblGroupTeams.getModel(), getJFrame());
+        editGroupTeam.setVisible(true);
     }//GEN-LAST:event_btnInsertActionPerformed
 
     /**

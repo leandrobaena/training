@@ -20,12 +20,14 @@ public class EditPlayer extends javax.swing.JDialog {
      *
      * @param player Jugador que va a editar o insertar
      * @param team Torneo al que pertenece el jugador o null si es general
+     * @param model Modelo de la tabla de jugadores de un equipo
      * @param owner Ventana principal de la aplicación de la cual este
      * formulario es modal
      */
-    public EditPlayer(Player player, Team team, JFrame owner) {
+    public EditPlayer(Player player, Team team, ListPlayerTableModel model, JFrame owner) {
         super(owner, true);
         initComponents();
+        this.model = model;
         this.player = player;
         this.player.setTeam(team);
         this.txtIdentification.setText("" + this.player.getIdPlayer());
@@ -147,7 +149,6 @@ public class EditPlayer extends javax.swing.JDialog {
         this.player.setName(this.txtName.getText());
         this.player.setDorsal(this.txtDorsal.getText());
         try {
-            ListPlayerTableModel model = ListPlayerTableModel.getInstance(player.getTeam());
             if (this.player.getIdPlayer() == 0) {
                 model.insertPlayer(this.player);
                 JOptionPane.showMessageDialog(null, "Jugador insertado con éxito");
@@ -174,5 +175,6 @@ public class EditPlayer extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
     private final Player player;
+    ListPlayerTableModel model;
     //</editor-fold>
 }

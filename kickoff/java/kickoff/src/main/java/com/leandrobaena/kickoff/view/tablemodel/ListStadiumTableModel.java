@@ -3,11 +3,11 @@ package com.leandrobaena.kickoff.view.tablemodel;
 import com.leandrobaena.kickoff.entities.Stadium;
 import com.leandrobaena.kickoff.logic.StadiumMgr;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -20,36 +20,20 @@ public class ListStadiumTableModel extends DefaultTableModel {
     //<editor-fold desc="Constructores" defaultstate="collapsed">
     /**
      * Crea un modelo de tabla para el listado de estadios
-     *
-     * @throws IOException Si no puede leer el archivo de propiedades
-     * @throws FileNotFoundException Si no encuentra el archivo de propiedades
-     * @throws SQLException Si hay un error en la conexión a la base de datos
      */
-    private ListStadiumTableModel() throws FileNotFoundException, IOException, SQLException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("settings_db.properties"));
-        stadiumMgr = new StadiumMgr(properties);
-        update();
+    public ListStadiumTableModel() {
+        try {
+            Properties properties = new Properties();
+            properties.load(new FileInputStream("settings_db.properties"));
+            stadiumMgr = new StadiumMgr(properties);
+            update();
+        } catch (IOException | SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Hubo un error al conectar a la base de datos");
+        }
     }
     //</editor-fold>
 
     //<editor-fold desc="Métodos" defaultstate="collapsed">
-    /**
-     * Trae la única instancia de esta clase
-     *
-     * @return Única instancia de esta clase
-     */
-    public static ListStadiumTableModel getInstance() {
-        if (instance == null) {
-            try {
-                instance = new ListStadiumTableModel();
-            } catch (IOException | SQLException ex) {
-                return null;
-            }
-        }
-        return instance;
-    }
-
     /**
      * Trae el estadio seleccionado
      *
@@ -168,13 +152,8 @@ public class ListStadiumTableModel extends DefaultTableModel {
     private ArrayList<Stadium> stadiums;
 
     /**
-     * Única instancia del modelo de la tabla de estadios
-     */
-    private static ListStadiumTableModel instance = null;
-
-    /**
      * Administrador de los estadios
      */
-    private final StadiumMgr stadiumMgr;
+    private StadiumMgr stadiumMgr;
     //</editor-fold>
 }
