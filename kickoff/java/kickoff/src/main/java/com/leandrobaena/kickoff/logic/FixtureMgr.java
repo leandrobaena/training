@@ -42,7 +42,7 @@ public class FixtureMgr {
      * Trae el listado de fechas desde la base de datos
      *
      * @param group Grupo al que se le consultan las fechas
-     * @return Listado de equipos
+     * @return Listado de fechas
      * @throws SQLException Si hubo un error en la consulta
      * @throws java.text.ParseException Si hubo un error al leer la fecha del
      * encuentro

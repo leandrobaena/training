@@ -55,6 +55,7 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
         btnUpdate = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
+        btnResult = new javax.swing.JButton();
 
         tblFixtures.setModel(new ListFixtureTableModel(this.group));
         tblFixtures.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -91,6 +92,14 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
             }
         });
 
+        btnResult.setText("Resultado");
+        btnResult.setEnabled(false);
+        btnResult.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResultActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -102,6 +111,8 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
                 .addComponent(btnUpdate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDelete)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnResult)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnClose))
         );
@@ -112,7 +123,8 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
                     .addComponent(btnInsert)
                     .addComponent(btnUpdate)
                     .addComponent(btnDelete)
-                    .addComponent(btnClose))
+                    .addComponent(btnClose)
+                    .addComponent(btnResult))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE))
         );
@@ -168,6 +180,14 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
         getTabbedPane().remove(this);
     }//GEN-LAST:event_btnCloseActionPerformed
 
+    private void btnResultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResultActionPerformed
+        Fixture selected = ((ListFixtureTableModel) tblFixtures.getModel()).getSelectedFixture(tblFixtures.getSelectedRow());
+        if (selected != null) {
+            EditResult editResult = new EditResult(selected, getJFrame());
+            editResult.setVisible(true);
+        }
+    }//GEN-LAST:event_btnResultActionPerformed
+
     /**
      * Dibuja el componente del listado de jugadores
      *
@@ -203,6 +223,7 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
         if (tblFixtures.getSelectedRow() != -1) {
             btnUpdate.setEnabled(true);
             btnDelete.setEnabled(true);
+            btnResult.setEnabled(true);
         }
     }
 
@@ -227,6 +248,7 @@ public class ListFixtures extends javax.swing.JPanel implements ListSelectionLis
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnInsert;
+    private javax.swing.JButton btnResult;
     private javax.swing.JButton btnUpdate;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblFixtures;

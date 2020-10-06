@@ -192,7 +192,7 @@ public class EditFixture extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**
-     * Inserta o actualiza un jugador
+     * Inserta o actualiza una fecha
      *
      * @param evt Evento de clic sobre el botón
      */
